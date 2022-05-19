@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan(basePackages = {"com.yil"})
-@OpenAPIDefinition(info = @Info(title = "ERP Adress Api", version = "1.0", description = "ERP Information"))
+@OpenAPIDefinition(info = @Info(title = "Adress Api", version = "1.0", description = "Yıldırım Information"))
 @SpringBootApplication
 public class AdressApplication {
 
