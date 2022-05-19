@@ -152,7 +152,7 @@ public class DistrictController {
             }
             entity.setDeletedTime(new Date());
             entity.setDeletedUserId(authenticatedUserId);
-            districtService.save(entity);
+            entity= districtService.save(entity);
             return ResponseEntity.ok("Country deleted.");
         } catch (Exception exception) {
             logger.log(Level.SEVERE, null, exception.toString());
