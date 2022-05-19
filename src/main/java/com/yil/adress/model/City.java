@@ -1,6 +1,6 @@
 package com.yil.adress.model;
 
-import com.yil.adress.base.IEntity;
+import com.yil.adress.base.AbstractEntity;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Data
 @Table(name = "City")
-public class City implements IEntity {
+public class City extends AbstractEntity {
     @Id
     @SequenceGenerator(name = "City_Sequence_Generator",
             sequenceName = "Seq_City",
@@ -21,4 +21,8 @@ public class City implements IEntity {
     private String name;
     @Column(name = "Code", length = 100)
     private String code;
+    @Column(name = "CountryId", nullable = false)
+    private Long countryId;
+
+
 }

@@ -2,34 +2,26 @@ package com.yil.adress.base;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.util.Date;
 
 @Getter
 @Setter
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
 public abstract class AbstractEntity implements IEntity {
 
-    @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "CreatedDate")
-    private Date createdDate;
-    @LastModifiedDate
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "LastModifiedDate")
-    private Date lastModifiedDate;
-    @CreatedBy
+    @Column(name = "CreatedTime")
+    private Date createdTime;
     @Column(name = "CreatedUserId")
-    private Long createdUser;
-    @LastModifiedBy
-    @Column(name = "LastModifiedUserId")
-    private Long lastModifiedUser;
-
+    private Long createdUserId;
+    @Column(name = "DeletedUserId")
+    private Long deletedUserId;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "DeletedTime")
+    private Date deletedTime;
 }

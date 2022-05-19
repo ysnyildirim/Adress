@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ExteriorDoorRepository extends JpaRepository<ExteriorDoor, Long> {
-    Page<ExteriorDoor> findAllByName(Pageable pageable, String name);
+    Page<ExteriorDoor> findAllByNameAndDeletedTimeIsNull(Pageable pageable, String name);
+    Page<ExteriorDoor> findAllByDeletedTimeIsNull(Pageable pageable );
 }

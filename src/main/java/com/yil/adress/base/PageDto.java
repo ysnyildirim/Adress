@@ -15,7 +15,7 @@ import java.util.function.Function;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PageDto<T> {
-    private Long totalElements;
+    private long totalElements;
     private int totalPages;
     private List<T> content;
     private int currentPage;

@@ -20,18 +20,13 @@ public class CountryService {
         this.countryRepository = countryRepository;
     }
 
-    public Page<Country> findAll(Pageable pageable) {
-        Page<Country> page = countryRepository.findAll(pageable);
+    public Page<Country> findAllByDeletedTimeIsNull(Pageable pageable) {
+        Page<Country> page = countryRepository.findAllByDeletedTimeIsNull(pageable);
         return page;
     }
 
-
     public Country save(Country country) {
         return countryRepository.save(country);
-    }
-
-    public void delete(Long id) {
-        countryRepository.deleteById(id);
     }
 
     public Country findById(Long id) throws EntityNotFoundException {
@@ -60,15 +55,7 @@ public class CountryService {
                 .build();
     }
 
-    public Page<Country> findAllByName(Pageable pageable, String name) {
-        return countryRepository.findAllByName(pageable, name);
-    }
-
-    public Page<Country> findAllByCode(Pageable pageable, String code) {
-        return countryRepository.findAllByCode(pageable, code);
-    }
-
-    public Page<Country> findAllByNameAndCode(Pageable pageable, String name, String code) {
-        return countryRepository.findAllByNameAndCode(pageable, name, code);
+    public Page<Country> findAllByNameAndDeletedTimeIsNull(Pageable pageable, String name) {
+        return countryRepository.findAllByNameAndDeletedTimeIsNull(pageable, name);
     }
 }

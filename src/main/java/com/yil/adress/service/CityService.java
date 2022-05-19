@@ -21,16 +21,7 @@ public class CityService {
     }
 
     public City save(City city) {
-        if (city.getId() == null) {
-            City city1 = cityRepository.findByNameAndAndCode(city.getName(), city.getCode());
-            if (city1 != null)
-                return city1;
-        }
         return cityRepository.save(city);
-    }
-
-    public void delete(Long id) {
-        cityRepository.deleteById(id);
     }
 
     public City findById(Long id) throws EntityNotFoundException {
@@ -39,12 +30,12 @@ public class CityService {
         });
     }
 
-    public Page<City> findAllByName(Pageable pageable, String name) {
-        return cityRepository.findAllByName(pageable, name);
+    public Page<City> findAllByNameAndDeletedTimeIsNull(Pageable pageable, String name) {
+        return cityRepository.findAllByNameAndDeletedTimeIsNull(pageable, name);
     }
 
-    public Page<City> findAll(Pageable pageable) {
-        Page<City> cities = cityRepository.findAll(pageable);
+    public Page<City> findAllByDeletedTimeIsNull(Pageable pageable) {
+        Page<City> cities = cityRepository.findAllByDeletedTimeIsNull(pageable);
         return cities;
     }
 
@@ -68,11 +59,4 @@ public class CityService {
         return city;
     }
 
-    public Page<City> findAllByCode(Pageable pageable, String code) {
-        return cityRepository.findAllByCode(pageable, code);
-    }
-
-    public Page<City> findAllByNameAndCode(Pageable pageable, String name, String code) {
-        return cityRepository.findAllByNameAndCode(pageable, name, code);
-    }
 }

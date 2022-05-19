@@ -1,7 +1,10 @@
 package com.yil.adress.controller;
 
-import com.yil.adress.base.*;
+import com.yil.adress.base.ApiHeaders;
+import com.yil.adress.base.PageDto;
+import com.yil.adress.base.SortOrderConverter;
 import com.yil.adress.dto.CountryDto;
+import com.yil.adress.dto.CreateCountryDto;
 import com.yil.adress.model.Country;
 import com.yil.adress.service.CountryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +12,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,12 +28,13 @@ import java.util.logging.Logger;
  * Created by yasin.yildirim on 3.05.2022.
  */
 @RestController
-@RequestMapping("/v1/country")
-public class CountryController implements SecuredRestController {
+@RequestMapping("/v1/countries")
+public class CountryController {
 
     private Logger logger = Logger.getLogger(CountryController.class.getName());
 
     private final CountryService countryService;
+
 
     @Autowired
     public CountryController(CountryService countryService) {
@@ -34,24 +42,27 @@ public class CountryController implements SecuredRestController {
     }
 
 
-    @GetMapping(value = "/id={id}")
-    public ResponseEntity<ApiResponce<CountryDto>> findById(@PathVariable long id) {
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<CountryDto> findById(@NotNull @PathVariable Long id) {
         try {
-            Country city = countryService.findById(id);
-            CountryDto dto = CountryService.toDto(city);
-            return ResponseEntity.ok(ApiResponce.ok(dto));
+            Country entity;
+            try {
+                entity = countryService.findById(id);
+            } catch (EntityNotFoundException entityNotFoundException) {
+                return ResponseEntity.notFound().build();
+            }
+            CountryDto dto = CountryService.toDto(entity);
+            return ResponseEntity.ok(dto);
         } catch (Exception exception) {
-            
             logger.log(Level.SEVERE, null, exception.toString());
-            return ResponseEntity.ok(ApiResponce.status(ApiStatus.Error));
+            return ResponseEntity.internalServerError().build();
         }
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponce<PageDto<CountryDto>>> findAll(
+    public ResponseEntity<PageDto<CountryDto>> findAll(
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) String code,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "1000") int size,
             @RequestParam(required = false) String[] sort) {
         try {
@@ -62,50 +73,76 @@ public class CountryController implements SecuredRestController {
             List<Sort.Order> orders = new SortOrderConverter(new String[]{"name", "code"}).convert(sort);
             Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
             Page<Country> city = null;
-            if (name != null && code == null)
-                city = countryService.findAllByName(pageable, name);
-            else if (name == null && code != null)
-                city = countryService.findAllByCode(pageable, code);
-            else if (name != null && code != null)
-                city = countryService.findAllByNameAndCode(pageable, name, code);
+            if (name != null)
+                city = countryService.findAllByNameAndDeletedTimeIsNull(pageable, name);
             else
-                city = countryService.findAll(pageable);
+                city = countryService.findAllByDeletedTimeIsNull(pageable);
             PageDto<CountryDto> pageDto = PageDto.toDto(city, CountryService::toDto);
-            return ResponseEntity.ok(ApiResponce.ok(pageDto));
+            return ResponseEntity.ok(pageDto);
         } catch (Exception exception) {
-            
             logger.log(Level.SEVERE, null, exception.toString());
-            return ResponseEntity.ok(ApiResponce.status(ApiStatus.Error));
+            return ResponseEntity.internalServerError().build();
         }
     }
 
-    @PostMapping(value = "/save")
-    public ResponseEntity<ApiResponce<List<CountryDto>>> save(@RequestBody List<CountryDto> request) {
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity create(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+                                 @RequestBody @Valid CreateCountryDto request) {
         try {
-            List<CountryDto> list = new ArrayList<>();
-            for (CountryDto dto : request) {
-                Country entity = CountryService.toEntity(dto);
-                entity = countryService.save(entity);
-                CountryDto countryDto = CountryService.toDto(entity);
-                list.add(countryDto);
+            Country entity = new Country();
+            entity.setCode(request.getCode());
+            entity.setName(request.getName());
+            entity.setCreatedTime(new Date());
+            entity.setCreatedUserId(authenticatedUserId);
+            entity = countryService.save(entity);
+            return ResponseEntity.created(null).build();
+        } catch (Exception exception) {
+            logger.log(Level.SEVERE, null, exception.toString());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity replace(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+                                  @PathVariable Long id,
+                                  @RequestBody @Valid CreateCountryDto request) {
+        try {
+            Country entity;
+            try {
+                entity = countryService.findById(id);
+            } catch (EntityNotFoundException entityNotFoundException) {
+                return ResponseEntity.notFound().build();
             }
-            return ResponseEntity.ok(ApiResponce.ok(list));
+            entity.setCode(request.getCode());
+            entity.setName(request.getName());
+            entity = countryService.save(entity);
+            return ResponseEntity.ok().build();
         } catch (Exception exception) {
-            
             logger.log(Level.SEVERE, null, exception.toString());
-            return ResponseEntity.ok(ApiResponce.status(ApiStatus.Error));
+            return ResponseEntity.internalServerError().build();
         }
     }
 
-    @DeleteMapping(value = "/delete/id={id}")
-    public ResponseEntity<ApiResponce<String>> delete(@PathVariable long id) {
+    @DeleteMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity delete(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+                                 @PathVariable Long id) {
         try {
-            countryService.delete(id);
-            return ResponseEntity.ok(ApiResponce.ok("Country deleted."));
+            Country entity;
+            try {
+                entity = countryService.findById(id);
+            } catch (EntityNotFoundException entityNotFoundException) {
+                return ResponseEntity.notFound().build();
+            }
+            entity.setDeletedTime(new Date());
+            entity.setDeletedUserId(authenticatedUserId);
+            entity = countryService.save(entity);
+            return ResponseEntity.ok("Country deleted.");
         } catch (Exception exception) {
-            
             logger.log(Level.SEVERE, null, exception.toString());
-            return ResponseEntity.ok(ApiResponce.status(ApiStatus.Error));
+            return ResponseEntity.internalServerError().build();
         }
     }
 

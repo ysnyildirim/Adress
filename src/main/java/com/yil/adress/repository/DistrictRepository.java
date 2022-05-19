@@ -8,9 +8,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DistrictRepository extends JpaRepository<District, Long> {
-    Page<District> findAllByName(Pageable pageable, String name);
+    Page<District> findAllByNameAndDeletedTimeIsNull(Pageable pageable, String name);
 
-    Page<District> findAllByCode(Pageable pageable, String code);
-
-    Page<District> findAllByNameAndCode(Pageable pageable, String name, String code);
+    Page<District> findAllByDeletedTimeIsNull(Pageable pageable);
 }

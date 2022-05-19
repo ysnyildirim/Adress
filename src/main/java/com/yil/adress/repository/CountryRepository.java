@@ -9,9 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CountryRepository extends JpaRepository<Country, Long> {
 
-    Page<Country> findAllByCode(Pageable pageable, String code);
+    Page<Country> findAllByNameAndDeletedTimeIsNull(Pageable pageable, String name);
 
-    Page<Country> findAllByName(Pageable pageable, String name);
-
-    Page<Country> findAllByNameAndCode(Pageable pageable, String name, String code);
+    Page<Country> findAllByDeletedTimeIsNull(Pageable pageable);
 }

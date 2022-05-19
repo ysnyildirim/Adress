@@ -42,23 +42,17 @@ public class StreetService {
         return streetRepository.save(street);
     }
 
-    public void delete(Long id) {
-        streetRepository.deleteById(id);
-    }
-
     public Street findById(Long id) throws EntityNotFoundException {
         return streetRepository.findById(id).orElseThrow(() -> {
             throw new EntityNotFoundException("Street not found");
         });
     }
 
-
-    public Page<Street> findAllByName(Pageable pageable, String name) {
-        return streetRepository.findAllByName(pageable, name);
+    public Page<Street> findAllByNameAndDeletedTimeIsNull(Pageable pageable, String name) {
+        return streetRepository.findAllByNameAndDeletedTimeIsNull(pageable, name);
     }
 
-
-    public Page<Street> findAll(Pageable pageable) {
-        return streetRepository.findAll(pageable);
+    public Page<Street> findAllByDeletedTimeIsNull(Pageable pageable) {
+        return streetRepository.findAllByDeletedTimeIsNull(pageable);
     }
 }

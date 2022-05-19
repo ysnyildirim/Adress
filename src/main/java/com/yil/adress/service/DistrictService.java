@@ -44,29 +44,17 @@ public class DistrictService {
         return districtRepository.save(district);
     }
 
-    public void delete(Long id) {
-        districtRepository.deleteById(id);
-    }
-
     public District findById(Long id) throws EntityNotFoundException {
         return districtRepository.findById(id).orElseThrow(() -> {
             throw new EntityNotFoundException("District not found");
         });
     }
 
-    public Page<District> findAllByName(Pageable pageable, String name) {
-        return districtRepository.findAllByName(pageable, name);
+    public Page<District> findAllByNameAndDeletedTimeIsNull(Pageable pageable, String name) {
+        return districtRepository.findAllByNameAndDeletedTimeIsNull(pageable, name);
     }
 
-    public Page<District> findAllByCode(Pageable pageable, String code) {
-        return districtRepository.findAllByCode(pageable, code);
-    }
-
-    public Page<District> findAllByNameAndCode(Pageable pageable, String name, String code) {
-        return districtRepository.findAllByNameAndCode(pageable, name, code);
-    }
-
-    public Page<District> findAll(Pageable pageable) {
-        return districtRepository.findAll(pageable);
+    public Page<District> findAllByDeletedTimeIsNull(Pageable pageable) {
+        return districtRepository.findAllByDeletedTimeIsNull(pageable);
     }
 }

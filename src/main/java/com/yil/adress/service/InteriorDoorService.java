@@ -40,21 +40,17 @@ public class InteriorDoorService {
         return interiorDoorRepository.save(interiorDoor);
     }
 
-    public void delete(Long id) {
-        interiorDoorRepository.deleteById(id);
-    }
-
     public InteriorDoor findById(Long id) throws EntityNotFoundException {
         return interiorDoorRepository.findById(id).orElseThrow(() -> {
             throw new EntityNotFoundException("Interior door not found");
         });
     }
 
-    public Page<InteriorDoor> findAllByName(Pageable pageable, String name) {
-        return interiorDoorRepository.findAllByName(pageable, name);
+    public Page<InteriorDoor> findAllByNameAndDeletedTimeIsNull(Pageable pageable, String name) {
+        return interiorDoorRepository.findAllByNameAndDeletedTimeIsNull(pageable,name);
     }
 
-    public Page<InteriorDoor> findAll(Pageable pageable) {
-        return interiorDoorRepository.findAll(pageable);
+    public Page<InteriorDoor> findAllByDeletedTimeIsNull(Pageable pageable) {
+        return interiorDoorRepository.findAllByDeletedTimeIsNull(pageable);
     }
 }
