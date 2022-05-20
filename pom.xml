@@ -9,11 +9,11 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.yil</groupId>
-    <artifactId>adress</artifactId>
+    <artifactId>address</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>adress</name>
-    <description>Adress Service</description>
+    <name>address</name>
+    <description>Address Service</description>
     <properties>
         <java.version>18</java.version>
     </properties>
