@@ -18,23 +18,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-/**
- * Created by yasin.yildirim on 3.05.2022.
- */
 @RestController
-@RequestMapping("/v1/countries/{countryId}/cities")
+@RequestMapping("/api/address/v1/cities")
 public class CityController {
 
     private final CityService cityService;
     private final CountryService countryService;
-    private Logger logger = Logger.getLogger(CityController.class.getName());
 
     @Autowired
     public CityController(CityService cityService, CountryService countryService) {
@@ -43,121 +36,72 @@ public class CityController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<CityDto> findById(@PathVariable long id) {
-        try {
-            City city;
-            try {
-                city = cityService.findById(id);
-            } catch (EntityNotFoundException entityNotFoundException) {
-                return ResponseEntity.notFound().build();
-            }
-            CityDto dto = CityService.toDto(city);
-            return ResponseEntity.ok(dto);
-        } catch (Exception exception) {
-            logger.log(Level.SEVERE, null, exception.toString());
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<CityDto> findById(@PathVariable Long id) {
+        City city = cityService.findById(id);
+        CityDto dto = CityService.toDto(city);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping
-    public ResponseEntity<PageDto<CityDto>> findAll(
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "1000") int size,
-            @RequestParam(required = false) String[] sort) {
-        try {
-            if (page < 0)
-                page = 0;
-            if (size <= 0 || size > 1000)
-                size = 1000;
-            List<Sort.Order> orders = new SortOrderConverter(new String[]{"name"}).convert(sort);
-            Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
-            Page<City> city = null;
-            if (name != null)
-                city = cityService.findAllByNameAndDeletedTimeIsNull(pageable, name);
-            else
-                city = cityService.findAllByDeletedTimeIsNull(pageable);
-            PageDto<CityDto> pageDto = PageDto.toDto(city, CityService::toDto);
-            return ResponseEntity.ok(pageDto);
-        } catch (Exception exception) {
-            logger.log(Level.SEVERE, null, exception.toString());
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<PageDto<CityDto>> findAll(@RequestParam(required = false) Long countryId,
+                                                    @RequestParam(required = false, defaultValue = "0") int page,
+                                                    @RequestParam(required = false, defaultValue = "1000") int size,
+                                                    @RequestParam(required = false) String[] sort) {
+        if (page < 0)
+            page = 0;
+        if (size <= 0 || size > 1000)
+            size = 1000;
+        List<Sort.Order> orders = new SortOrderConverter(new String[]{"name"}).convert(sort);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
+        Page<City> city;
+        if (countryId != null)
+            city = cityService.findAllByCountryIdAndDeletedTimeIsNull(pageable, countryId);
+        else
+            city = cityService.findAllByDeletedTimeIsNull(pageable);
+        PageDto<CityDto> pageDto = PageDto.toDto(city, CityService::toDto);
+        return ResponseEntity.ok(pageDto);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity create(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
-                                 @Valid @RequestBody CreateCityDto request) {
-        try {
-            Country country;
-            try {
-                country = countryService.findById(request.getCountryId());
-            } catch (EntityNotFoundException entityNotFoundException) {
-                return ResponseEntity.notFound().build();
-            }
-            City entity = new City();
-            entity.setName(request.getName());
-            entity.setCode(request.getCode());
-            entity.setCountryId(country.getId());
-            entity.setCreatedTime(new Date());
-            entity.setCreatedUserId(authenticatedUserId);
-            entity = cityService.save(entity);
-            return ResponseEntity.created(null).build();
-        } catch (Exception exception) {
-            logger.log(Level.SEVERE, null, exception.toString());
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<CityDto> create(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+                                          @Valid @RequestBody CreateCityDto request) {
+        Country country = countryService.findByIdAndDeletedTimeIsNull(request.getCountryId());
+        City entity = new City();
+        entity.setName(request.getName());
+        entity.setCode(request.getCode());
+        entity.setCountryId(country.getId());
+        entity.setCreatedTime(new Date());
+        entity.setCreatedUserId(authenticatedUserId);
+        entity = cityService.save(entity);
+        CityDto dto = CityService.toDto(entity);
+        return ResponseEntity.created(null).body(dto);
     }
 
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity replace(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
-                                  @PathVariable Long id,
-                                  @Valid @RequestBody CreateCityDto request) {
-        try {
-            Country country;
-            try {
-                country = countryService.findById(request.getCountryId());
-            } catch (EntityNotFoundException entityNotFoundException) {
-                return ResponseEntity.notFound().build();
-            }
-            City entity = null;
-            try {
-                entity = cityService.findById(id);
-            } catch (EntityNotFoundException entityNotFoundException) {
-                return ResponseEntity.notFound().build();
-            }
-            entity.setName(request.getName());
-            entity.setCode(request.getCode());
-            entity.setCountryId(country.getId());
-            entity = cityService.save(entity);
-            return ResponseEntity.ok().build();
-        } catch (Exception exception) {
-            logger.log(Level.SEVERE, null, exception.toString());
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<CityDto> replace(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+                                           @PathVariable Long id,
+                                           @Valid @RequestBody CreateCityDto request) {
+        Country country = countryService.findByIdAndDeletedTimeIsNull(request.getCountryId());
+        City entity = cityService.findById(id);
+        entity.setName(request.getName());
+        entity.setCode(request.getCode());
+        entity.setCountryId(country.getId());
+        entity = cityService.save(entity);
+        CityDto dto = CityService.toDto(entity);
+        return ResponseEntity.ok(dto);
     }
 
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> delete(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                          @PathVariable Long id) {
-        try {
-            City city;
-            try {
-                city = cityService.findById(id);
-            } catch (EntityNotFoundException entityNotFoundException) {
-                return ResponseEntity.notFound().build();
-            }
-            city.setDeletedTime(new Date());
-            city.setDeletedUserId(authenticatedUserId);
-            cityService.save(city);
-            return ResponseEntity.ok("City deleted.");
-        } catch (Exception exception) {
-            logger.log(Level.SEVERE, null, exception.toString());
-            return ResponseEntity.internalServerError().build();
-        }
+        City city = cityService.findByIdAndDeletedTimeIsNull(id);
+        city.setDeletedTime(new Date());
+        city.setDeletedUserId(authenticatedUserId);
+        cityService.save(city);
+        return ResponseEntity.ok("City deleted.");
     }
 
 }

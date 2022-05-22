@@ -20,20 +20,9 @@ public class PageDto<T> {
     private List<T> content;
     private int currentPage;
 
-    public static <P> PageDto<P> toDto(Page<P> page) {
-        return new PageDtoBuilder<P>()
-                .currentPage(page.getNumber())
-                .totalElements(page.getTotalElements())
-                .totalPages(page.getTotalPages())
-                .content(page.getContent())
-                .build();
-    }
-
     public static <P, V> PageDto<V> toDto(Page<P> page, Function<P, V> function) {
         List<V> list = new ArrayList<>();
-        page.getContent().forEach(f -> {
-            list.add(function.apply(f));
-        });
+        page.getContent().forEach(f -> list.add(function.apply(f)));
         return new PageDtoBuilder<V>()
                 .currentPage(page.getNumber())
                 .totalElements(page.getTotalElements())

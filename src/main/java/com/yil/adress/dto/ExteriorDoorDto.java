@@ -14,4 +14,5 @@ import lombok.NoArgsConstructor;
 public class ExteriorDoorDto {
     private Long id;
     private String name;
+    private Long streetId;
 }

@@ -1,9 +1,9 @@
-# Adres Servisi 
+# Adres Servisi
 
 # Bilgi
- 
+
 Adres bilgilerinin sunulduğu servistir.
- 
+
 * [Ülke](src/main/java/com/yil/adress/model/Country.java)
 * [Şehir](src/main/java/com/yil/adress/model/City.java)
 * [Mahalle-Köy-Bucak-Bölge](src/main/java/com/yil/adress/model/District.java)
@@ -13,4 +13,5 @@ Adres bilgilerinin sunulduğu servistir.
 
 ### Kılavuz
 
-Api gatewayden gelirken header kısmında [Authenticated-UserId](src/main/java/com/yil/adress/base/ApiHeaders.java) gönderilmesi gerekiyor.
+Api gatewayden gelirken header kısmında [Authenticated-UserId](src/main/java/com/yil/adress/base/ApiHeaders.java)
+gönderilmesi gerekiyor.

@@ -1,14 +1,13 @@
 package com.yil.adress.service;
 
 import com.yil.adress.dto.StreetDto;
+import com.yil.adress.exception.StreetNotFoundException;
 import com.yil.adress.model.Street;
 import com.yil.adress.repository.StreetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityNotFoundException;
 
 @Service
 public class StreetService {
@@ -20,36 +19,36 @@ public class StreetService {
         this.streetRepository = streetRepository;
     }
 
-    public static StreetDto toDto(Street street) {
+    public static StreetDto toDto(Street street) throws NullPointerException {
         if (street == null)
-            return StreetDto.builder().build();
+            throw new NullPointerException("Street is null");
         return StreetDto.builder()
                 .id(street.getId())
                 .name(street.getName())
+                .districtId(street.getDistrictId())
                 .build();
     }
 
-    public static Street toEntity(StreetDto request) {
-        Street street = new Street();
-        if (request == null)
-            return street;
-        street.setId(request.getId());
-        street.setName(request.getName());
-        return street;
-    }
 
     public Street save(Street street) {
         return streetRepository.save(street);
     }
 
-    public Street findById(Long id) throws EntityNotFoundException {
+    public Street findById(Long id) throws StreetNotFoundException {
         return streetRepository.findById(id).orElseThrow(() -> {
-            throw new EntityNotFoundException("Street not found");
+            throw new StreetNotFoundException("Street not found");
         });
     }
 
-    public Page<Street> findAllByNameAndDeletedTimeIsNull(Pageable pageable, String name) {
-        return streetRepository.findAllByNameAndDeletedTimeIsNull(pageable, name);
+    public Street findByIdAndDeletedTimeIsNull(Long id) throws StreetNotFoundException {
+        Street street = streetRepository.findByIdAndDeletedTimeIsNull(id);
+        if (street == null)
+            throw new StreetNotFoundException();
+        return street;
+    }
+
+    public Page<Street> findAllByDistrictIdAndDeletedTimeIsNull(Pageable pageable, Long districtId) {
+        return streetRepository.findAllByDistrictIdAndDeletedTimeIsNull(pageable, districtId);
     }
 
     public Page<Street> findAllByDeletedTimeIsNull(Pageable pageable) {

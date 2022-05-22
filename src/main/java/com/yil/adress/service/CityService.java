@@ -1,14 +1,13 @@
 package com.yil.adress.service;
 
 import com.yil.adress.dto.CityDto;
+import com.yil.adress.exception.CityNotFoundException;
 import com.yil.adress.model.City;
 import com.yil.adress.repository.CityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityNotFoundException;
 
 @Service
 public class CityService {
@@ -20,43 +19,40 @@ public class CityService {
         this.cityRepository = cityRepository;
     }
 
-    public City save(City city) {
-        return cityRepository.save(city);
-    }
-
-    public City findById(Long id) throws EntityNotFoundException {
-        return cityRepository.findById(id).orElseThrow(() -> {
-            throw new EntityNotFoundException("City not found");
-        });
-    }
-
-    public Page<City> findAllByNameAndDeletedTimeIsNull(Pageable pageable, String name) {
-        return cityRepository.findAllByNameAndDeletedTimeIsNull(pageable, name);
-    }
-
-    public Page<City> findAllByDeletedTimeIsNull(Pageable pageable) {
-        Page<City> cities = cityRepository.findAllByDeletedTimeIsNull(pageable);
-        return cities;
-    }
-
     public static CityDto toDto(City city) {
         if (city == null)
-            return CityDto.builder().build();
+            throw new NullPointerException("City is null");
         return CityDto.builder()
                 .id(city.getId())
                 .name(city.getName())
                 .code(city.getCode())
+                .countryId(city.getCountryId())
                 .build();
     }
 
-    public static City toEntity(CityDto dto) {
-        City city = new City();
-        if (dto == null)
-            return city;
-        city.setId(dto.getId());
-        city.setCode(dto.getCode());
-        city.setName(dto.getName());
+    public City save(City city) {
+        return cityRepository.save(city);
+    }
+
+    public City findById(Long id) throws CityNotFoundException {
+        return cityRepository.findById(id).orElseThrow(() -> {
+            throw new CityNotFoundException();
+        });
+    }
+
+    public City findByIdAndDeletedTimeIsNull(Long id) throws CityNotFoundException {
+        City city = cityRepository.findByIdAndDeletedTimeIsNull(id);
+        if (city == null)
+            throw new CityNotFoundException();
         return city;
+    }
+
+    public Page<City> findAllByCountryIdAndDeletedTimeIsNull(Pageable pageable, Long countryId) {
+        return cityRepository.findAllByCountryIdAndDeletedTimeIsNull(pageable, countryId);
+    }
+
+    public Page<City> findAllByDeletedTimeIsNull(Pageable pageable) {
+        return cityRepository.findAllByDeletedTimeIsNull(pageable);
     }
 
 }

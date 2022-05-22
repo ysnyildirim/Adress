@@ -12,7 +12,6 @@ public class City extends AbstractEntity {
     @Id
     @SequenceGenerator(name = "City_Sequence_Generator",
             sequenceName = "Seq_City",
-            initialValue = 1,
             allocationSize = 1)
     @GeneratedValue(generator = "City_Sequence_Generator")
     @Column(name = "Id", nullable = false, unique = true)

@@ -1,14 +1,13 @@
 package com.yil.adress.service;
 
 import com.yil.adress.dto.CountryDto;
+import com.yil.adress.exception.CountryNotFoundException;
 import com.yil.adress.model.Country;
 import com.yil.adress.repository.CountryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityNotFoundException;
 
 @Service
 public class CountryService {
@@ -20,34 +19,9 @@ public class CountryService {
         this.countryRepository = countryRepository;
     }
 
-    public Page<Country> findAllByDeletedTimeIsNull(Pageable pageable) {
-        Page<Country> page = countryRepository.findAllByDeletedTimeIsNull(pageable);
-        return page;
-    }
-
-    public Country save(Country country) {
-        return countryRepository.save(country);
-    }
-
-    public Country findById(Long id) throws EntityNotFoundException {
-        return countryRepository.findById(id).orElseThrow(() -> {
-            throw new EntityNotFoundException("Country not found");
-        });
-    }
-
-    public static Country toEntity(CountryDto request) {
-        Country country = new Country();
-        if (request == null)
-            return country;
-        country.setId(request.getId());
-        country.setCode(request.getCode());
-        country.setName(request.getName());
-        return country;
-    }
-
     public static CountryDto toDto(Country country) {
         if (country == null)
-            return CountryDto.builder().build();
+            throw new NullPointerException("Country is null");
         return CountryDto.builder()
                 .id(country.getId())
                 .code(country.getCode())
@@ -55,7 +29,25 @@ public class CountryService {
                 .build();
     }
 
-    public Page<Country> findAllByNameAndDeletedTimeIsNull(Pageable pageable, String name) {
-        return countryRepository.findAllByNameAndDeletedTimeIsNull(pageable, name);
+    public Page<Country> findAllByDeletedTimeIsNull(Pageable pageable) {
+        return countryRepository.findAllByDeletedTimeIsNull(pageable);
     }
+
+    public Country save(Country country) {
+        return countryRepository.save(country);
+    }
+
+    public Country findById(Long id) throws CountryNotFoundException {
+        return countryRepository.findById(id).orElseThrow(() -> {
+            throw new CountryNotFoundException("Country not found");
+        });
+    }
+
+    public Country findByIdAndDeletedTimeIsNull(Long id) {
+        Country country = countryRepository.findByIdAndDeletedTimeIsNull(id);
+        if (country == null)
+            throw new CountryNotFoundException();
+        return country;
+    }
+
 }

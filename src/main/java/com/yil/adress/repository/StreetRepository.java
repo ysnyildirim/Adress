@@ -9,7 +9,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StreetRepository extends JpaRepository<Street, Long> {
 
-    Page<Street> findAllByNameAndDeletedTimeIsNull(Pageable pageable, String name);
+    Page<Street> findAllByDistrictIdAndDeletedTimeIsNull(Pageable pageable, Long district);
 
     Page<Street> findAllByDeletedTimeIsNull(Pageable pageable);
+
+    Street findByIdAndDeletedTimeIsNull(Long id);
+
 }

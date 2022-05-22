@@ -16,134 +16,84 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by yasin.yildirim on 3.05.2022.
  */
 @RestController
-@RequestMapping("/v1/countries")
+@RequestMapping("/api/address/v1/countries")
 public class CountryController {
 
-    private Logger logger = Logger.getLogger(CountryController.class.getName());
-
     private final CountryService countryService;
-
 
     @Autowired
     public CountryController(CountryService countryService) {
         this.countryService = countryService;
     }
 
-
     @GetMapping(value = "/{id}")
     public ResponseEntity<CountryDto> findById(@NotNull @PathVariable Long id) {
-        try {
-            Country entity;
-            try {
-                entity = countryService.findById(id);
-            } catch (EntityNotFoundException entityNotFoundException) {
-                return ResponseEntity.notFound().build();
-            }
-            CountryDto dto = CountryService.toDto(entity);
-            return ResponseEntity.ok(dto);
-        } catch (Exception exception) {
-            logger.log(Level.SEVERE, null, exception.toString());
-            return ResponseEntity.internalServerError().build();
-        }
+        Country entity = countryService.findById(id);
+        CountryDto dto = CountryService.toDto(entity);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping
     public ResponseEntity<PageDto<CountryDto>> findAll(
-            @RequestParam(required = false) String name,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "1000") int size,
             @RequestParam(required = false) String[] sort) {
-        try {
-            if (page < 0)
-                page = 0;
-            if (size <= 0 || size > 1000)
-                size = 1000;
-            List<Sort.Order> orders = new SortOrderConverter(new String[]{"name", "code"}).convert(sort);
-            Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
-            Page<Country> city = null;
-            if (name != null)
-                city = countryService.findAllByNameAndDeletedTimeIsNull(pageable, name);
-            else
-                city = countryService.findAllByDeletedTimeIsNull(pageable);
-            PageDto<CountryDto> pageDto = PageDto.toDto(city, CountryService::toDto);
-            return ResponseEntity.ok(pageDto);
-        } catch (Exception exception) {
-            logger.log(Level.SEVERE, null, exception.toString());
-            return ResponseEntity.internalServerError().build();
-        }
+        if (page < 0)
+            page = 0;
+        if (size <= 0 || size > 1000)
+            size = 1000;
+        List<Sort.Order> orders = new SortOrderConverter(new String[]{"name", "code"}).convert(sort);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
+        Page<Country> city = countryService.findAllByDeletedTimeIsNull(pageable);
+        PageDto<CountryDto> pageDto = PageDto.toDto(city, CountryService::toDto);
+        return ResponseEntity.ok(pageDto);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity create(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
-                                 @RequestBody @Valid CreateCountryDto request) {
-        try {
-            Country entity = new Country();
-            entity.setCode(request.getCode());
-            entity.setName(request.getName());
-            entity.setCreatedTime(new Date());
-            entity.setCreatedUserId(authenticatedUserId);
-            entity = countryService.save(entity);
-            return ResponseEntity.created(null).build();
-        } catch (Exception exception) {
-            logger.log(Level.SEVERE, null, exception.toString());
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<CountryDto> create(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+                                             @RequestBody @Valid CreateCountryDto request) {
+        Country entity = new Country();
+        entity.setCode(request.getCode());
+        entity.setName(request.getName());
+        entity.setCreatedTime(new Date());
+        entity.setCreatedUserId(authenticatedUserId);
+        entity = countryService.save(entity);
+        CountryDto dto = CountryService.toDto(entity);
+        return ResponseEntity.created(null).body(dto);
     }
 
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity replace(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
-                                  @PathVariable Long id,
-                                  @RequestBody @Valid CreateCountryDto request) {
-        try {
-            Country entity;
-            try {
-                entity = countryService.findById(id);
-            } catch (EntityNotFoundException entityNotFoundException) {
-                return ResponseEntity.notFound().build();
-            }
-            entity.setCode(request.getCode());
-            entity.setName(request.getName());
-            entity = countryService.save(entity);
-            return ResponseEntity.ok().build();
-        } catch (Exception exception) {
-            logger.log(Level.SEVERE, null, exception.toString());
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<CountryDto> replace(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+                                              @PathVariable Long id,
+                                              @RequestBody @Valid CreateCountryDto request) {
+        Country entity = countryService.findByIdAndDeletedTimeIsNull(id);
+        entity.setCode(request.getCode());
+        entity.setName(request.getName());
+        entity = countryService.save(entity);
+        CountryDto dto = CountryService.toDto(entity);
+        return ResponseEntity.ok(dto);
     }
 
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity delete(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                  @PathVariable Long id) {
-        try {
-            Country entity;
-            try {
-                entity = countryService.findById(id);
-            } catch (EntityNotFoundException entityNotFoundException) {
-                return ResponseEntity.notFound().build();
-            }
-            entity.setDeletedTime(new Date());
-            entity.setDeletedUserId(authenticatedUserId);
-            entity = countryService.save(entity);
-            return ResponseEntity.ok("Country deleted.");
-        } catch (Exception exception) {
-            logger.log(Level.SEVERE, null, exception.toString());
-            return ResponseEntity.internalServerError().build();
-        }
+        Country entity = countryService.findByIdAndDeletedTimeIsNull(id);
+        entity.setDeletedTime(new Date());
+        entity.setDeletedUserId(authenticatedUserId);
+        countryService.save(entity);
+        return ResponseEntity.ok("Country deleted.");
     }
 
 

@@ -1,7 +1,6 @@
 package com.yil.adress.model;
 
 import com.yil.adress.base.AbstractEntity;
-import com.yil.adress.base.IEntity;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -13,7 +12,6 @@ public class Country extends AbstractEntity {
     @Id
     @SequenceGenerator(name = "Country_Sequence_Generator",
             sequenceName = "Seq_Country",
-            initialValue = 1,
             allocationSize = 1)
     @GeneratedValue(generator = "Country_Sequence_Generator")
     @Column(name = "Id", nullable = false, unique = true)
