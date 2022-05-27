@@ -1,6 +1,6 @@
 package com.yil.adress.controller;
 
-import com.yil.adress.base.ApiHeaders;
+import com.yil.adress.base.ApiConstant;
 import com.yil.adress.base.PageDto;
 import com.yil.adress.base.SortOrderConverter;
 import com.yil.adress.dto.CreateInteriorDoorDto;
@@ -48,8 +48,8 @@ public class InteriorDoorController {
     @GetMapping
     public ResponseEntity<PageDto<InteriorDoorDto>> findAll(
             @RequestParam(required = false) Long exteriorDoorId,
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "1000") int size,
+            @RequestParam(required = false, defaultValue = ApiConstant.PAGE) int page,
+            @RequestParam(required = false, defaultValue = ApiConstant.PAGE_SIZE) int size,
             @RequestParam(required = false) String[] sort) {
         if (page < 0)
             page = 0;
@@ -68,7 +68,7 @@ public class InteriorDoorController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<InteriorDoorDto> create(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+    public ResponseEntity<InteriorDoorDto> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                                   @Valid @RequestBody CreateInteriorDoorDto request) {
         ExteriorDoor parent = exteriorDoorService.findByIdAndDeletedTimeIsNull(request.getExteriorDoorId());
         InteriorDoor entity = new InteriorDoor();
@@ -83,7 +83,7 @@ public class InteriorDoorController {
 
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<InteriorDoorDto> replace(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+    public ResponseEntity<InteriorDoorDto> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                                    @PathVariable Long id,
                                                    @Valid @RequestBody CreateInteriorDoorDto request) {
         ExteriorDoor parent = exteriorDoorService.findByIdAndDeletedTimeIsNull(request.getExteriorDoorId());
@@ -97,7 +97,7 @@ public class InteriorDoorController {
 
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity delete(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+    public ResponseEntity delete(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                  @PathVariable Long id) {
         InteriorDoor entity = interiorDoorService.findByIdAndDeletedTimeIsNull(id);
         entity.setDeletedTime(new Date());

@@ -1,6 +1,6 @@
 package com.yil.adress.controller;
 
-import com.yil.adress.base.ApiHeaders;
+import com.yil.adress.base.ApiConstant;
 import com.yil.adress.base.PageDto;
 import com.yil.adress.base.SortOrderConverter;
 import com.yil.adress.dto.CreateDistrictDto;
@@ -48,8 +48,8 @@ public class DistrictController {
     @GetMapping
     public ResponseEntity<PageDto<DistrictDto>> findAll(
             @RequestParam(required = false) Long cityId,
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "1000") int size,
+            @RequestParam(required = false, defaultValue = ApiConstant.PAGE) int page,
+            @RequestParam(required = false, defaultValue = ApiConstant.PAGE_SIZE) int size,
             @RequestParam(required = false) String[] sort) {
         if (page < 0)
             page = 0;
@@ -68,7 +68,7 @@ public class DistrictController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<DistrictDto> create(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+    public ResponseEntity<DistrictDto> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                               @Valid @RequestBody CreateDistrictDto request) {
         City parent = cityService.findByIdAndDeletedTimeIsNull(request.getCityId());
         District entity = new District();
@@ -84,7 +84,7 @@ public class DistrictController {
 
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<DistrictDto> replace(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+    public ResponseEntity<DistrictDto> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                                @PathVariable Long id,
                                                @Valid @RequestBody CreateDistrictDto request) {
         City parent = cityService.findByIdAndDeletedTimeIsNull(request.getCityId());
@@ -99,7 +99,7 @@ public class DistrictController {
 
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity delete(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+    public ResponseEntity delete(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                  @PathVariable Long id) {
         District entity = districtService.findByIdAndDeletedTimeIsNull(id);
         entity.setDeletedTime(new Date());

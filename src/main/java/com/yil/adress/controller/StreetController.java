@@ -1,6 +1,6 @@
 package com.yil.adress.controller;
 
-import com.yil.adress.base.ApiHeaders;
+import com.yil.adress.base.ApiConstant;
 import com.yil.adress.base.PageDto;
 import com.yil.adress.base.SortOrderConverter;
 import com.yil.adress.dto.CreateStreetDto;
@@ -48,8 +48,8 @@ public class StreetController {
     @GetMapping
     public ResponseEntity<PageDto<StreetDto>> findAll(
             @RequestParam(required = false) Long districtId,
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "1000") int size,
+            @RequestParam(required = false, defaultValue = ApiConstant.PAGE) int page,
+            @RequestParam(required = false, defaultValue = ApiConstant.PAGE_SIZE) int size,
             @RequestParam(required = false) String[] sort) {
         if (page < 0)
             page = 0;
@@ -68,7 +68,7 @@ public class StreetController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<StreetDto> create(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+    public ResponseEntity<StreetDto> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                             @Valid @RequestBody CreateStreetDto request) {
         District parent = districtService.findByIdAndDeletedTimeIsNull(request.getDistrictId());
         Street entity = new Street();
@@ -83,7 +83,7 @@ public class StreetController {
 
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<StreetDto> replace(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+    public ResponseEntity<StreetDto> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                              @PathVariable Long id,
                                              @Valid @RequestBody CreateStreetDto request) {
         District parent = districtService.findByIdAndDeletedTimeIsNull(request.getDistrictId());
@@ -97,7 +97,7 @@ public class StreetController {
 
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity delete(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+    public ResponseEntity delete(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                  @PathVariable Long id) {
         Street entity = streetService.findByIdAndDeletedTimeIsNull(id);
         entity.setDeletedTime(new Date());

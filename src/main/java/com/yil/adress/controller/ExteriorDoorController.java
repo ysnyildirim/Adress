@@ -1,6 +1,6 @@
 package com.yil.adress.controller;
 
-import com.yil.adress.base.ApiHeaders;
+import com.yil.adress.base.ApiConstant;
 import com.yil.adress.base.PageDto;
 import com.yil.adress.base.SortOrderConverter;
 import com.yil.adress.dto.CreateExteriorDoorDto;
@@ -48,8 +48,8 @@ public class ExteriorDoorController {
     @GetMapping
     public ResponseEntity<PageDto<ExteriorDoorDto>> findAll(
             @RequestParam(required = false) Long streetId,
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "1000") int size,
+            @RequestParam(required = false, defaultValue = ApiConstant.PAGE) int page,
+            @RequestParam(required = false, defaultValue = ApiConstant.PAGE_SIZE) int size,
             @RequestParam(required = false) String[] sort) {
         if (page < 0)
             page = 0;
@@ -68,7 +68,7 @@ public class ExteriorDoorController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ExteriorDoorDto> create(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+    public ResponseEntity<ExteriorDoorDto> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                                   @Valid @RequestBody CreateExteriorDoorDto request) {
         Street parent = streetService.findByIdAndDeletedTimeIsNull(request.getStreetId());
         ExteriorDoor entity = new ExteriorDoor();
@@ -83,7 +83,7 @@ public class ExteriorDoorController {
 
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<ExteriorDoorDto> replace(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+    public ResponseEntity<ExteriorDoorDto> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                                    @PathVariable Long id,
                                                    @Valid @RequestBody CreateExteriorDoorDto request) {
         Street parent = streetService.findByIdAndDeletedTimeIsNull(request.getStreetId());
@@ -98,7 +98,7 @@ public class ExteriorDoorController {
 
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> delete(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+    public ResponseEntity<String> delete(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                          @PathVariable Long id) {
         ExteriorDoor entity = exteriorDoorService.findByIdAndDeletedTimeIsNull(id);
         entity.setDeletedTime(new Date());

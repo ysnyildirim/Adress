@@ -1,6 +1,6 @@
 package com.yil.adress.controller;
 
-import com.yil.adress.base.ApiHeaders;
+import com.yil.adress.base.ApiConstant;
 import com.yil.adress.base.PageDto;
 import com.yil.adress.base.SortOrderConverter;
 import com.yil.adress.dto.CityDto;
@@ -44,8 +44,8 @@ public class CityController {
 
     @GetMapping
     public ResponseEntity<PageDto<CityDto>> findAll(@RequestParam(required = false) Long countryId,
-                                                    @RequestParam(required = false, defaultValue = "0") int page,
-                                                    @RequestParam(required = false, defaultValue = "1000") int size,
+                                                    @RequestParam(required = false, defaultValue = ApiConstant.PAGE) int page,
+                                                    @RequestParam(required = false, defaultValue = ApiConstant.PAGE_SIZE) int size,
                                                     @RequestParam(required = false) String[] sort) {
         if (page < 0)
             page = 0;
@@ -64,7 +64,7 @@ public class CityController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<CityDto> create(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+    public ResponseEntity<CityDto> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                           @Valid @RequestBody CreateCityDto request) {
         Country country = countryService.findByIdAndDeletedTimeIsNull(request.getCountryId());
         City entity = new City();
@@ -80,7 +80,7 @@ public class CityController {
 
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<CityDto> replace(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+    public ResponseEntity<CityDto> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                            @PathVariable Long id,
                                            @Valid @RequestBody CreateCityDto request) {
         Country country = countryService.findByIdAndDeletedTimeIsNull(request.getCountryId());
@@ -95,7 +95,7 @@ public class CityController {
 
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> delete(@RequestHeader(value = ApiHeaders.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+    public ResponseEntity<String> delete(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                          @PathVariable Long id) {
         City city = cityService.findByIdAndDeletedTimeIsNull(id);
         city.setDeletedTime(new Date());
