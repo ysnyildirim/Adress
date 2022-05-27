@@ -82,7 +82,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler({ExteriorDoorNotFoundException.class})
     @Nullable
-    public final ResponseEntity<Object> handleStreetNotFoundException(ExteriorDoorNotFoundException ex, WebRequest request) {
+    public final ResponseEntity<Object> handleExteriorDoorNotFoundException(ExteriorDoorNotFoundException ex, WebRequest request) {
         ErrorResponce responce = ErrorResponce.builder()
                 .message(ApiError.ExteriorDoorNotFound.getMessage())
                 .status(ApiError.ExteriorDoorNotFound.getCode())
@@ -93,7 +93,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler({InteriorDoorNotFoundException.class})
     @Nullable
-    public final ResponseEntity<Object> handleStreetNotFoundException(InteriorDoorNotFoundException ex, WebRequest request) {
+    public final ResponseEntity<Object> handleInteriorDoorNotFoundException(InteriorDoorNotFoundException ex, WebRequest request) {
         ErrorResponce responce = ErrorResponce.builder()
                 .message(ApiError.InteriorDoorNotFound.getMessage())
                 .status(ApiError.InteriorDoorNotFound.getCode())
