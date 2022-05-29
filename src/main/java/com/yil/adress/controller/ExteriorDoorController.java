@@ -95,7 +95,6 @@ public class ExteriorDoorController {
         return ResponseEntity.ok(dto);
     }
 
-
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> delete(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
