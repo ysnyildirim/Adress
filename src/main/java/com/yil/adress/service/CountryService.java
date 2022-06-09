@@ -39,7 +39,7 @@ public class CountryService {
 
     public Country findById(Long id) throws CountryNotFoundException {
         return countryRepository.findById(id).orElseThrow(() -> {
-            throw new CountryNotFoundException("Country not found");
+            throw new CountryNotFoundException();
         });
     }
 

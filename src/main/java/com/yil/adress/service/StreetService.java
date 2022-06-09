@@ -36,7 +36,7 @@ public class StreetService {
 
     public Street findById(Long id) throws StreetNotFoundException {
         return streetRepository.findById(id).orElseThrow(() -> {
-            throw new StreetNotFoundException("Street not found");
+            throw new StreetNotFoundException();
         });
     }
 
