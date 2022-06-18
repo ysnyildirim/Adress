@@ -25,6 +25,7 @@ public class CountryService {
         return CountryDto.builder()
                 .id(country.getId())
                 .code(country.getCode())
+                .phoneCode(country.getPhoneCode())
                 .name(country.getName())
                 .build();
     }

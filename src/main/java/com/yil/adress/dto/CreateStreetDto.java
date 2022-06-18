@@ -19,4 +19,6 @@ public class CreateStreetDto {
     private String name;
     @NotNull
     private Long districtId;
+    @Length(min = 1, max = 5)
+    private String postCode;
 }

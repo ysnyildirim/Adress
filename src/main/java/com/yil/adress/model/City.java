@@ -7,21 +7,23 @@ import javax.persistence.*;
 
 @Entity
 @Data
-@Table(name = "City")
+@Table(name = "CITY")
 public class City extends AbstractEntity {
     @Id
-    @SequenceGenerator(name = "City_Sequence_Generator",
-            sequenceName = "Seq_City",
+    @SequenceGenerator(name = "CITY_SEQUENCE_GENERATOR",
+            sequenceName = "SEQ_CITY",
             allocationSize = 1)
-    @GeneratedValue(generator = "City_Sequence_Generator")
-    @Column(name = "Id", nullable = false, unique = true)
+    @GeneratedValue(generator = "CITY_SEQUENCE_GENERATOR")
+    @Column(name = "ID", nullable = false, unique = true)
     private Long id;
-    @Column(name = "Name", nullable = false, length = 100)
+    @Column(name = "NAME", nullable = false, length = 100)
     private String name;
-    @Column(name = "Code", length = 100)
+    @Column(name = "CODE", length = 100)
     private String code;
-    @Column(name = "CountryId", nullable = false)
+    @Column(name = "COUNTRY_ID", nullable = false)
     private Long countryId;
+    @Column(name = "PHONE_CODE", length = 3)
+    private String phoneCode;
 
 
 }

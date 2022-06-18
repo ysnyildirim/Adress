@@ -7,17 +7,20 @@ import javax.persistence.*;
 
 @Entity
 @Data
-@Table(name = "Country")
+@Table(name = "COUNTRY")
 public class Country extends AbstractEntity {
     @Id
-    @SequenceGenerator(name = "Country_Sequence_Generator",
-            sequenceName = "Seq_Country",
+    @SequenceGenerator(name = "COUNTRY_SEQUENCE_GENERATOR",
+            sequenceName = "SEQ_COUNTRY",
             allocationSize = 1)
-    @GeneratedValue(generator = "Country_Sequence_Generator")
-    @Column(name = "Id", nullable = false, unique = true)
+    @GeneratedValue(generator = "COUNTRY_SEQUENCE_GENERATOR")
+    @Column(name = "ID", nullable = false, unique = true)
     private Long id;
-    @Column(name = "Name", nullable = false, length = 100)
+    @Column(name = "NAME", nullable = false, length = 100)
     private String name;
-    @Column(name = "Code", nullable = false, length = 3)
+    @Column(name = "CODE", nullable = false, length = 3)
     private String code;
+    @Column(name = "PHONE_CODE", nullable = false, length = 3)
+    private String phoneCode;
+
 }

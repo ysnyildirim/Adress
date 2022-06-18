@@ -73,7 +73,6 @@ public class DistrictController {
         City parent = cityService.findByIdAndDeletedTimeIsNull(request.getCityId());
         District entity = new District();
         entity.setName(request.getName());
-        entity.setCode(request.getCode());
         entity.setCityId(parent.getId());
         entity.setCreatedTime(new Date());
         entity.setCreatedUserId(authenticatedUserId);
@@ -90,7 +89,6 @@ public class DistrictController {
         City parent = cityService.findByIdAndDeletedTimeIsNull(request.getCityId());
         District entity = districtService.findByIdAndDeletedTimeIsNull(id);
         entity.setName(request.getName());
-        entity.setCode(request.getCode());
         entity.setCityId(parent.getId());
         entity = districtService.save(entity);
         DistrictDto dto = DistrictService.toDto(entity);

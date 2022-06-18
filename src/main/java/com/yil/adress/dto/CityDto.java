@@ -16,4 +16,5 @@ public class CityDto {
     private String name;
     private String code;
     private Long countryId;
+    private String phoneCode;
 }

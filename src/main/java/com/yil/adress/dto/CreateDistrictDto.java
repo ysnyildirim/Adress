@@ -17,9 +17,6 @@ public class CreateDistrictDto {
     @NotBlank
     @Length(min = 1, max = 100)
     private String name;
-    @NotBlank
-    @Length(min = 1, max = 3)
-    private String code;
     @NotNull
     private Long cityId;
 }

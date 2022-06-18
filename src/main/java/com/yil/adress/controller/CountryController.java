@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -64,6 +66,7 @@ public class CountryController {
                                              @RequestBody @Valid CreateCountryDto request) {
         Country entity = new Country();
         entity.setCode(request.getCode());
+        entity.setPhoneCode(request.getPhoneCode());
         entity.setName(request.getName());
         entity.setCreatedTime(new Date());
         entity.setCreatedUserId(authenticatedUserId);

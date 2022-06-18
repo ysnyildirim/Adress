@@ -26,9 +26,9 @@ public class StreetService {
                 .id(street.getId())
                 .name(street.getName())
                 .districtId(street.getDistrictId())
+                .postCode(street.getPostCode())
                 .build();
     }
-
 
     public Street save(Street street) {
         return streetRepository.save(street);

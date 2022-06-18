@@ -25,7 +25,6 @@ public class DistrictService {
         return DistrictDto.builder()
                 .id(entity.getId())
                 .name(entity.getName())
-                .code(entity.getCode())
                 .cityId(entity.getCityId())
                 .build();
     }

@@ -27,6 +27,7 @@ public class CityService {
                 .name(city.getName())
                 .code(city.getCode())
                 .countryId(city.getCountryId())
+                .phoneCode(city.getPhoneCode())
                 .build();
     }
 

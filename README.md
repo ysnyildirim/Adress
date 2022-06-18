@@ -9,7 +9,7 @@ Adres bilgilerinin sunulduğu servistir.
 * [Mahalle-Köy-Bucak-Bölge](src/main/java/com/yil/adress/model/District.java)
 * [Cadde-Sokak](src/main/java/com/yil/adress/model/Street.java)
 * [Dış Kapı](src/main/java/com/yil/adress/model/ExteriorDoor.java)
-* [İç Kapı](src/main/java/com/yil/adress/model/InteriorDoor.java)
+* [Iç Kapı](src/main/java/com/yil/adress/model/InteriorDoor.java)
 
 ### Kılavuz
 

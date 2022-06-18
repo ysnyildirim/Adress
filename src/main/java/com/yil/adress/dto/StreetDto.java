@@ -15,4 +15,5 @@ public class StreetDto {
     private Long id;
     private String name;
     private Long districtId;
+    private String postCode;
 }

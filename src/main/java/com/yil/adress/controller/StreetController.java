@@ -74,6 +74,7 @@ public class StreetController {
         Street entity = new Street();
         entity.setName(request.getName());
         entity.setDistrictId(parent.getId());
+        entity.setPostCode(request.getPostCode());
         entity.setCreatedTime(new Date());
         entity.setCreatedUserId(authenticatedUserId);
         entity = streetService.save(entity);
@@ -90,6 +91,7 @@ public class StreetController {
         Street entity = streetService.findByIdAndDeletedTimeIsNull(id);
         entity.setName(request.getName());
         entity.setDistrictId(parent.getId());
+        entity.setPostCode(request.getPostCode());
         entity = streetService.save(entity);
         StreetDto dto = StreetService.toDto(entity);
         return ResponseEntity.ok(dto);

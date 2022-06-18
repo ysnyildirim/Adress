@@ -7,17 +7,17 @@ import javax.persistence.*;
 
 @Entity
 @Data
-@Table(name = "ExteriorDoor")
+@Table(name = "EXTERIOR_DOOR")
 public class ExteriorDoor extends AbstractEntity {
     @Id
-    @SequenceGenerator(name = "ExteriorDoor_Sequence_Generator",
-            sequenceName = "Seq_ExteriorDoor",
+    @SequenceGenerator(name = "EXTERIOR_DOOR_SEQUENCE_GENERATOR",
+            sequenceName = "SEQ_EXTERIOR_DOOR",
             allocationSize = 1)
-    @GeneratedValue(generator = "ExteriorDoor_Sequence_Generator")
-    @Column(name = "Id", nullable = false, unique = true)
+    @GeneratedValue(generator = "EXTERIOR_DOOR_SEQUENCE_GENERATOR")
+    @Column(name = "ID", nullable = false, unique = true)
     private Long id;
-    @Column(name = "Name", nullable = false, length = 100)
+    @Column(name = "NAME", nullable = false, length = 100)
     private String name;
-    @Column(name = "StreetId", nullable = false)
+    @Column(name = "STREET_ID", nullable = false)
     private Long streetId;
 }

@@ -21,17 +21,22 @@ public class SortOrderConverter implements Converter<String[], List<Sort.Order>>
         if (source == null)
             return orders;
         for (String order : source) {
-            String[] sort = order.split(",");
-            if (sort.length < 1 || sort.length > 2)
+            String[] sort = order.split(":");
+            if (sort.length < 1 || sort.length > 3)
                 throw new UnsupportedOperationException("Sort syntax error!");
-            if (Arrays.stream(avaiableNames).filter(f -> f.equalsIgnoreCase(sort[0].toLowerCase())).count() == 0)
+            if (Arrays.stream(avaiableNames).filter(f -> f.equals(sort[0])).count() == 0)
                 throw new UnsupportedOperationException("Sort not avaiable!");
             if (sort.length == 2 && !Arrays.asList("ASC", "DESC").contains(sort[1].toUpperCase()))
                 throw new IllegalArgumentException("Sort direction not avaiable!");
-            if (sort.length == 1)
-                orders.add(new Sort.Order(Sort.Direction.ASC, sort[0]));
-            else
-                orders.add(new Sort.Order(Sort.Direction.fromString(sort[1]), sort[0]));
+            if (sort.length == 3 && !Arrays.asList("NULLS_FIRST", "NULLS_LAST").contains(sort[2].toUpperCase()))
+                throw new IllegalArgumentException("Sort null direction not avaiable!");
+            Sort.NullHandling nullHandling = Sort.NullHandling.NATIVE;
+            Sort.Direction direction = Sort.Direction.ASC;
+            if (sort.length == 2)
+                direction = Sort.Direction.fromString(sort[1]);
+            if (sort.length == 3)
+                nullHandling = Sort.NullHandling.valueOf(sort[2]);
+            orders.add(new Sort.Order(direction, sort[0], nullHandling));
         }
         return orders;
     }

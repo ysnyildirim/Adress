@@ -71,6 +71,7 @@ public class CityController {
         entity.setName(request.getName());
         entity.setCode(request.getCode());
         entity.setCountryId(country.getId());
+        entity.setPhoneCode(request.getPhoneCode());
         entity.setCreatedTime(new Date());
         entity.setCreatedUserId(authenticatedUserId);
         entity = cityService.save(entity);
@@ -87,6 +88,7 @@ public class CityController {
         City entity = cityService.findById(id);
         entity.setName(request.getName());
         entity.setCode(request.getCode());
+        entity.setPhoneCode(request.getPhoneCode());
         entity.setCountryId(country.getId());
         entity = cityService.save(entity);
         CityDto dto = CityService.toDto(entity);
