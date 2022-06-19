@@ -13,7 +13,7 @@ public class District extends AbstractEntity {
     public String name;
     @Id
     @SequenceGenerator(name = "DISTRICT_SEQUENCE_GENERATOR",
-            sequenceName = "SEQ_DISTRICT",
+            sequenceName = "SEQ_DISTRICT_ID",
             allocationSize = 1)
     @GeneratedValue(generator = "DISTRICT_SEQUENCE_GENERATOR")
     @Column(name = "ID", nullable = false, unique = true)

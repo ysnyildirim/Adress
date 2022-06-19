@@ -11,7 +11,7 @@ import javax.persistence.*;
 public class City extends AbstractEntity {
     @Id
     @SequenceGenerator(name = "CITY_SEQUENCE_GENERATOR",
-            sequenceName = "SEQ_CITY",
+            sequenceName = "SEQ_CITY_ID",
             allocationSize = 1)
     @GeneratedValue(generator = "CITY_SEQUENCE_GENERATOR")
     @Column(name = "ID", nullable = false, unique = true)

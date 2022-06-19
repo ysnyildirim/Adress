@@ -102,7 +102,7 @@ public class DistrictController {
         District entity = districtService.findByIdAndDeletedTimeIsNull(id);
         entity.setDeletedTime(new Date());
         entity.setDeletedUserId(authenticatedUserId);
-       districtService.save(entity);
+        districtService.save(entity);
         return ResponseEntity.ok("Country deleted.");
     }
 

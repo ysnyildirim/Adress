@@ -11,7 +11,7 @@ import javax.persistence.*;
 public class Country extends AbstractEntity {
     @Id
     @SequenceGenerator(name = "COUNTRY_SEQUENCE_GENERATOR",
-            sequenceName = "SEQ_COUNTRY",
+            sequenceName = "SEQ_COUNTRY_ID",
             allocationSize = 1)
     @GeneratedValue(generator = "COUNTRY_SEQUENCE_GENERATOR")
     @Column(name = "ID", nullable = false, unique = true)

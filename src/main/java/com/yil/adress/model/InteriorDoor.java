@@ -11,7 +11,7 @@ import javax.persistence.*;
 public class InteriorDoor extends AbstractEntity {
     @Id
     @SequenceGenerator(name = "INTERIOR_DOOR_SEQUENCE_GENERATOR",
-            sequenceName = "SEQ_INTERIOR_DOOR",
+            sequenceName = "SEQ_INTERIOR_DOOR_ID",
             allocationSize = 1)
     @GeneratedValue(generator = "INTERIOR_DOOR_SEQUENCE_GENERATOR")
     @Column(name = "ID", nullable = false, unique = true)
