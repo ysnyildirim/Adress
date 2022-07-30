@@ -1,14 +1,15 @@
 package com.yil.adress.model;
 
-import com.yil.adress.base.AbstractEntity;
+import com.yil.adress.base.IEntity;
 import lombok.Data;
 
 import javax.persistence.*;
 
 @Entity
 @Data
-@Table(name = "INTERIOR_DOOR")
-public class InteriorDoor extends AbstractEntity {
+@Table(schema = "ADR",
+        name = "INTERIOR_DOOR")
+public class InteriorDoor implements IEntity {
     @Id
     @SequenceGenerator(name = "INTERIOR_DOOR_SEQUENCE_GENERATOR",
             sequenceName = "SEQ_INTERIOR_DOOR_ID",

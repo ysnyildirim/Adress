@@ -1,14 +1,15 @@
 package com.yil.adress.model;
 
-import com.yil.adress.base.AbstractEntity;
+import com.yil.adress.base.IEntity;
 import lombok.Data;
 
 import javax.persistence.*;
 
 @Entity
 @Data
-@Table(name = "COUNTRY")
-public class Country extends AbstractEntity {
+@Table(schema = "ADR",
+        name = "COUNTRY")
+public class Country implements IEntity {
     @Id
     @SequenceGenerator(name = "COUNTRY_SEQUENCE_GENERATOR",
             sequenceName = "SEQ_COUNTRY_ID",

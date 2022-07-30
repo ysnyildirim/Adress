@@ -1,14 +1,15 @@
 package com.yil.adress.model;
 
-import com.yil.adress.base.AbstractEntity;
+import com.yil.adress.base.IEntity;
 import lombok.Data;
 
 import javax.persistence.*;
 
 @Entity
 @Data
-@Table(name = "DISTRICT")
-public class District extends AbstractEntity {
+@Table(schema = "ADR",
+        name = "DISTRICT")
+public class District implements IEntity {
     @Column(name = "NAME", nullable = false, length = 100)
     public String name;
     @Id
