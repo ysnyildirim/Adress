@@ -4,6 +4,7 @@ import com.yil.adress.base.IEntity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Data
@@ -23,5 +24,16 @@ public class Country implements IEntity {
     private String code;
     @Column(name = "PHONE_CODE", nullable = false, length = 3)
     private String phoneCode;
-
+//    @Column(name = "STATE", nullable = false)
+//    private Boolean state;
+//    @Temporal(TemporalType.TIMESTAMP)
+//    @Column(name = "CREATED_DATE")
+//    private Date createdDate;
+//    @Column(name = "CREATED_USER_ID")
+//    private Long createdUserId;
+//    @Temporal(TemporalType.TIMESTAMP)
+//    @Column(name = "LAST_MODIFIED_DATE")
+//    private Date lastModifiedDate;
+//    @Column(name = "LAST_MODIFIED_USER_ID")
+//    private Long lastModifiedUserId;
 }
