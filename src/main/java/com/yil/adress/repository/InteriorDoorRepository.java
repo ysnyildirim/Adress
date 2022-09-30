@@ -9,9 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface InteriorDoorRepository extends JpaRepository<InteriorDoor, Long> {
 
-    Page<InteriorDoor> findAllByDeletedTimeIsNull(Pageable pageable);
-
-    InteriorDoor findByIdAndDeletedTimeIsNull(Long id);
-
-    Page<InteriorDoor> findByExteriorDoorIdAndDeletedTimeIsNull(Pageable pageable, Long exteriorDoorId);
+    Page<InteriorDoor> findByExteriorDoorId(Pageable pageable, Long exteriorDoorId);
 }

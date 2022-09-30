@@ -39,18 +39,24 @@ public class InteriorDoorService {
     }
 
     public InteriorDoor findByIdAndDeletedTimeIsNull(Long id) throws InteriorDoorNotFoundException {
-        InteriorDoor interiorDoor = interiorDoorRepository.findByIdAndDeletedTimeIsNull(id);
-        if (interiorDoor == null)
-            throw new InteriorDoorNotFoundException();
-        return interiorDoor;
+        return interiorDoorRepository.findById(id).orElseThrow(InteriorDoorNotFoundException::new);
     }
 
 
-    public Page<InteriorDoor> findByExteriorDoorIdAndDeletedTimeIsNull(Pageable pageable, Long exteriorDoorId) {
-        return interiorDoorRepository.findByExteriorDoorIdAndDeletedTimeIsNull(pageable, exteriorDoorId);
+    public Page<InteriorDoor> findByExteriorDoorId(Pageable pageable, Long exteriorDoorId) {
+        return interiorDoorRepository.findByExteriorDoorId(pageable, exteriorDoorId);
     }
 
-    public Page<InteriorDoor> findAllByDeletedTimeIsNull(Pageable pageable) {
-        return interiorDoorRepository.findAllByDeletedTimeIsNull(pageable);
+    public Page<InteriorDoor> findAll(Pageable pageable) {
+        return interiorDoorRepository.findAll(pageable);
     }
+
+    public boolean existsById(long id) {
+        return interiorDoorRepository.existsById(id);
+    }
+
+    public void deleteById(long id) {
+        interiorDoorRepository.deleteById(id);
+    }
+
 }

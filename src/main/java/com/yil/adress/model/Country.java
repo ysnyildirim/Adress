@@ -14,6 +14,7 @@ public class Country implements IEntity {
     @Id
     @SequenceGenerator(name = "COUNTRY_SEQUENCE_GENERATOR",
             sequenceName = "SEQ_COUNTRY_ID",
+            schema = "ADR",
             allocationSize = 1)
     @GeneratedValue(generator = "COUNTRY_SEQUENCE_GENERATOR")
     @Column(name = "ID", nullable = false, unique = true)
@@ -24,16 +25,17 @@ public class Country implements IEntity {
     private String code;
     @Column(name = "PHONE_CODE", nullable = false, length = 3)
     private String phoneCode;
-//    @Column(name = "STATE", nullable = false)
-//    private Boolean state;
-//    @Temporal(TemporalType.TIMESTAMP)
-//    @Column(name = "CREATED_DATE")
-//    private Date createdDate;
-//    @Column(name = "CREATED_USER_ID")
-//    private Long createdUserId;
-//    @Temporal(TemporalType.TIMESTAMP)
-//    @Column(name = "LAST_MODIFIED_DATE")
-//    private Date lastModifiedDate;
-//    @Column(name = "LAST_MODIFIED_USER_ID")
-//    private Long lastModifiedUserId;
+
+    @Column(name = "IS_ACTIVE", nullable = false)
+    private Boolean isActive;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "CREATED_DATE")
+    private Date createdDate;
+    @Column(name = "CREATED_USER_ID")
+    private Long createdUserId;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "LAST_MODIFY_DATE")
+    private Date lastModifyDate;
+    @Column(name = "LAST_MODIFY_USER_ID")
+    private Long lastModifyUserId;
 }

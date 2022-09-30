@@ -34,24 +34,23 @@ public class StreetService {
         return streetRepository.save(street);
     }
 
+    public void deleteById(long id) {
+        streetRepository.deleteById(id);
+    }
+
     public Street findById(Long id) throws StreetNotFoundException {
-        return streetRepository.findById(id).orElseThrow(() -> {
-            throw new StreetNotFoundException();
-        });
+        return streetRepository.findById(id).orElseThrow(StreetNotFoundException::new);
     }
 
-    public Street findByIdAndDeletedTimeIsNull(Long id) throws StreetNotFoundException {
-        Street street = streetRepository.findByIdAndDeletedTimeIsNull(id);
-        if (street == null)
-            throw new StreetNotFoundException();
-        return street;
+    public Page<Street> findAllByDistrictId(Pageable pageable, Long districtId) {
+        return streetRepository.findAllByDistrictId(pageable, districtId);
     }
 
-    public Page<Street> findAllByDistrictIdAndDeletedTimeIsNull(Pageable pageable, Long districtId) {
-        return streetRepository.findAllByDistrictIdAndDeletedTimeIsNull(pageable, districtId);
+    public Page<Street> findAll(Pageable pageable) {
+        return streetRepository.findAll(pageable);
     }
 
-    public Page<Street> findAllByDeletedTimeIsNull(Pageable pageable) {
-        return streetRepository.findAllByDeletedTimeIsNull(pageable);
+    public boolean existsById(long id) {
+        return streetRepository.existsById(id);
     }
 }

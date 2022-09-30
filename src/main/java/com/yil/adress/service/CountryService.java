@@ -30,8 +30,8 @@ public class CountryService {
                 .build();
     }
 
-    public Page<Country> findAllByDeletedTimeIsNull(Pageable pageable) {
-        return countryRepository.findAllByDeletedTimeIsNull(pageable);
+    public Page<Country> findAll(Pageable pageable) {
+        return countryRepository.findAll(pageable);
     }
 
     public Country save(Country country) {
@@ -39,16 +39,15 @@ public class CountryService {
     }
 
     public Country findById(Long id) throws CountryNotFoundException {
-        return countryRepository.findById(id).orElseThrow(() -> {
-            throw new CountryNotFoundException();
-        });
+        return countryRepository.findById(id).orElseThrow(CountryNotFoundException::new);
     }
 
-    public Country findByIdAndDeletedTimeIsNull(Long id) {
-        Country country = countryRepository.findByIdAndDeletedTimeIsNull(id);
-        if (country == null)
-            throw new CountryNotFoundException();
-        return country;
+    public boolean existsById (long id ) {
+        return countryRepository.existsById(id);
+    }
+
+    public void deleteById(long id) {
+        countryRepository.deleteById(id);
     }
 
 }

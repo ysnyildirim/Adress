@@ -35,25 +35,24 @@ public class CityService {
         return cityRepository.save(city);
     }
 
-    public City findById(Long id) throws CityNotFoundException {
-        return cityRepository.findById(id).orElseThrow(() -> {
-            throw new CityNotFoundException();
-        });
+    public void deleteById(long id) {
+        cityRepository.deleteById(id);
     }
 
-    public City findByIdAndDeletedTimeIsNull(Long id) throws CityNotFoundException {
-        City city = cityRepository.findByIdAndDeletedTimeIsNull(id);
-        if (city == null)
-            throw new CityNotFoundException();
-        return city;
+    public City findById(long id) throws CityNotFoundException {
+        return cityRepository.findById(id).orElseThrow(CityNotFoundException::new);
     }
 
-    public Page<City> findAllByCountryIdAndDeletedTimeIsNull(Pageable pageable, Long countryId) {
-        return cityRepository.findAllByCountryIdAndDeletedTimeIsNull(pageable, countryId);
+    public Page<City> findAllByCountryId(Pageable pageable, long countryId) {
+        return cityRepository.findAllByCountryId(pageable, countryId);
     }
 
-    public Page<City> findAllByDeletedTimeIsNull(Pageable pageable) {
-        return cityRepository.findAllByDeletedTimeIsNull(pageable);
+    public Page<City> findAll(Pageable pageable) {
+        return cityRepository.findAll(pageable);
+    }
+
+    public boolean existsById (long id ) {
+        return cityRepository.existsById(id);
     }
 
 }

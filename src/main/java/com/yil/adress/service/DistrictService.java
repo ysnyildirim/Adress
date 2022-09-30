@@ -34,23 +34,24 @@ public class DistrictService {
     }
 
     public District findById(Long id) throws DistrictNotFoundException {
-        return districtRepository.findById(id).orElseThrow(() -> {
-            throw new DistrictNotFoundException();
-        });
+        return districtRepository.findById(id).orElseThrow(DistrictNotFoundException::new);
     }
 
-    public District findByIdAndDeletedTimeIsNull(Long id) throws DistrictNotFoundException {
-        District district = districtRepository.findByIdAndDeletedTimeIsNull(id);
-        if (district == null)
-            throw new DistrictNotFoundException();
-        return district;
+    public Page<District> findAll(Pageable pageable) {
+        return districtRepository.findAll(pageable);
     }
 
-    public Page<District> findAllByDeletedTimeIsNull(Pageable pageable) {
-        return districtRepository.findAllByDeletedTimeIsNull(pageable);
+    public Page<District> findAllByCityId(Pageable pageable, Long cityId) {
+        return districtRepository.findAllByCityId(pageable, cityId);
     }
 
-    public Page<District> findAllByCityIdAndDeletedTimeIsNull(Pageable pageable, Long cityId) {
-        return districtRepository.findAllByCityIdAndDeletedTimeIsNull(pageable, cityId);
+
+    public void deleteById(long id) {
+        districtRepository.deleteById(id);
+    }
+
+
+    public boolean existsById (long id ) {
+        return districtRepository.existsById(id);
     }
 }

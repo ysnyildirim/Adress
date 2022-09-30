@@ -5,7 +5,7 @@ import com.yil.adress.base.PageDto;
 import com.yil.adress.base.SortOrderConverter;
 import com.yil.adress.dto.CreateInteriorDoorDto;
 import com.yil.adress.dto.InteriorDoorDto;
-import com.yil.adress.model.ExteriorDoor;
+import com.yil.adress.exception.ExteriorDoorNotFoundException;
 import com.yil.adress.model.InteriorDoor;
 import com.yil.adress.service.ExteriorDoorService;
 import com.yil.adress.service.InteriorDoorService;
@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,9 +58,9 @@ public class InteriorDoorController {
         Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
         Page<InteriorDoor> entities;
         if (exteriorDoorId != null)
-            entities = interiorDoorService.findByExteriorDoorIdAndDeletedTimeIsNull(pageable, exteriorDoorId);
+            entities = interiorDoorService.findByExteriorDoorId(pageable, exteriorDoorId);
         else
-            entities = interiorDoorService.findAllByDeletedTimeIsNull(pageable);
+            entities = interiorDoorService.findAll(pageable);
         PageDto<InteriorDoorDto> pageDto = PageDto.toDto(entities, InteriorDoorService::toDto);
         return ResponseEntity.ok(pageDto);
     }
@@ -70,12 +69,11 @@ public class InteriorDoorController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<InteriorDoorDto> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                                   @Valid @RequestBody CreateInteriorDoorDto request) {
-        ExteriorDoor parent = exteriorDoorService.findByIdAndDeletedTimeIsNull(request.getExteriorDoorId());
+        if (!exteriorDoorService.existsById(request.getExteriorDoorId()))
+            throw new ExteriorDoorNotFoundException();
         InteriorDoor entity = new InteriorDoor();
         entity.setName(request.getName());
-        entity.setExteriorDoorId(parent.getId());
-        entity.setCreatedTime(new Date());
-        entity.setCreatedUserId(authenticatedUserId);
+        entity.setExteriorDoorId(request.getExteriorDoorId());
         entity = interiorDoorService.save(entity);
         InteriorDoorDto dto = InteriorDoorService.toDto(entity);
         return ResponseEntity.created(null).body(dto);
@@ -86,10 +84,11 @@ public class InteriorDoorController {
     public ResponseEntity<InteriorDoorDto> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                                    @PathVariable Long id,
                                                    @Valid @RequestBody CreateInteriorDoorDto request) {
-        ExteriorDoor parent = exteriorDoorService.findByIdAndDeletedTimeIsNull(request.getExteriorDoorId());
+        if (!exteriorDoorService.existsById(request.getExteriorDoorId()))
+            throw new ExteriorDoorNotFoundException();
         InteriorDoor entity = interiorDoorService.findByIdAndDeletedTimeIsNull(id);
         entity.setName(request.getName());
-        entity.setExteriorDoorId(parent.getId());
+        entity.setExteriorDoorId(request.getExteriorDoorId());
         entity = interiorDoorService.save(entity);
         InteriorDoorDto dto = InteriorDoorService.toDto(entity);
         return ResponseEntity.ok(dto);
@@ -99,10 +98,7 @@ public class InteriorDoorController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity delete(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                  @PathVariable Long id) {
-        InteriorDoor entity = interiorDoorService.findByIdAndDeletedTimeIsNull(id);
-        entity.setDeletedTime(new Date());
-        entity.setDeletedUserId(authenticatedUserId);
-        interiorDoorService.save(entity);
+        interiorDoorService.deleteById(id);
         return ResponseEntity.ok("Interior door deleted.");
     }
 }

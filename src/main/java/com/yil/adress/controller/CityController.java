@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -55,9 +54,9 @@ public class CityController {
         Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
         Page<City> city;
         if (countryId != null)
-            city = cityService.findAllByCountryIdAndDeletedTimeIsNull(pageable, countryId);
+            city = cityService.findAllByCountryId(pageable, countryId);
         else
-            city = cityService.findAllByDeletedTimeIsNull(pageable);
+            city = cityService.findAll(pageable);
         PageDto<CityDto> pageDto = PageDto.toDto(city, CityService::toDto);
         return ResponseEntity.ok(pageDto);
     }
@@ -66,14 +65,12 @@ public class CityController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CityDto> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                           @Valid @RequestBody CreateCityDto request) {
-        Country country = countryService.findByIdAndDeletedTimeIsNull(request.getCountryId());
+        Country country = countryService.findById(request.getCountryId());
         City entity = new City();
         entity.setName(request.getName());
         entity.setCode(request.getCode());
         entity.setCountryId(country.getId());
         entity.setPhoneCode(request.getPhoneCode());
-        entity.setCreatedTime(new Date());
-        entity.setCreatedUserId(authenticatedUserId);
         entity = cityService.save(entity);
         CityDto dto = CityService.toDto(entity);
         return ResponseEntity.created(null).body(dto);
@@ -84,7 +81,7 @@ public class CityController {
     public ResponseEntity<CityDto> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                            @PathVariable Long id,
                                            @Valid @RequestBody CreateCityDto request) {
-        Country country = countryService.findByIdAndDeletedTimeIsNull(request.getCountryId());
+        Country country = countryService.findById(request.getCountryId());
         City entity = cityService.findById(id);
         entity.setName(request.getName());
         entity.setCode(request.getCode());
@@ -99,10 +96,7 @@ public class CityController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> delete(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                          @PathVariable Long id) {
-        City city = cityService.findByIdAndDeletedTimeIsNull(id);
-        city.setDeletedTime(new Date());
-        city.setDeletedUserId(authenticatedUserId);
-        cityService.save(city);
+        cityService.deleteById(id);
         return ResponseEntity.ok("City deleted.");
     }
 

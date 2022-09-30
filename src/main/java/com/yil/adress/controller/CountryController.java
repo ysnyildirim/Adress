@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -53,7 +52,7 @@ public class CountryController {
             size = 1000;
         List<Sort.Order> orders = new SortOrderConverter(new String[]{"name", "code"}).convert(sort);
         Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
-        Page<Country> city = countryService.findAllByDeletedTimeIsNull(pageable);
+        Page<Country> city = countryService.findAll(pageable);
         PageDto<CountryDto> pageDto = PageDto.toDto(city, CountryService::toDto);
         return ResponseEntity.ok(pageDto);
     }
@@ -66,8 +65,6 @@ public class CountryController {
         entity.setCode(request.getCode());
         entity.setPhoneCode(request.getPhoneCode());
         entity.setName(request.getName());
-        entity.setCreatedTime(new Date());
-        entity.setCreatedUserId(authenticatedUserId);
         entity = countryService.save(entity);
         CountryDto dto = CountryService.toDto(entity);
         return ResponseEntity.created(null).body(dto);
@@ -78,7 +75,7 @@ public class CountryController {
     public ResponseEntity<CountryDto> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                               @PathVariable Long id,
                                               @RequestBody @Valid CreateCountryDto request) {
-        Country entity = countryService.findByIdAndDeletedTimeIsNull(id);
+        Country entity = countryService.findById(id);
         entity.setCode(request.getCode());
         entity.setName(request.getName());
         entity = countryService.save(entity);
@@ -90,10 +87,7 @@ public class CountryController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity delete(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                  @PathVariable Long id) {
-        Country entity = countryService.findByIdAndDeletedTimeIsNull(id);
-        entity.setDeletedTime(new Date());
-        entity.setDeletedUserId(authenticatedUserId);
-        countryService.save(entity);
+        countryService.deleteById(id);
         return ResponseEntity.ok("Country deleted.");
     }
 

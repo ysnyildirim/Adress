@@ -9,9 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DistrictRepository extends JpaRepository<District, Long> {
 
-    Page<District> findAllByDeletedTimeIsNull(Pageable pageable);
-
-    District findByIdAndDeletedTimeIsNull(Long id);
-
-    Page<District> findAllByCityIdAndDeletedTimeIsNull(Pageable pageable, Long cityId);
+    Page<District> findAllByCityId(Pageable pageable, Long cityId);
 }

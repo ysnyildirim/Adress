@@ -9,7 +9,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CountryRepository extends JpaRepository<Country, Long> {
 
-    Page<Country> findAllByDeletedTimeIsNull(Pageable pageable);
-
-    Country findByIdAndDeletedTimeIsNull(Long id);
 }

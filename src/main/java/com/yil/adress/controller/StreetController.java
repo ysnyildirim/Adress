@@ -5,6 +5,7 @@ import com.yil.adress.base.PageDto;
 import com.yil.adress.base.SortOrderConverter;
 import com.yil.adress.dto.CreateStreetDto;
 import com.yil.adress.dto.StreetDto;
+import com.yil.adress.exception.DistrictNotFoundException;
 import com.yil.adress.model.District;
 import com.yil.adress.model.Street;
 import com.yil.adress.service.DistrictService;
@@ -19,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,9 +59,9 @@ public class StreetController {
         Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
         Page<Street> entities;
         if (districtId != null)
-            entities = streetService.findAllByDistrictIdAndDeletedTimeIsNull(pageable, districtId);
+            entities = streetService.findAllByDistrictId(pageable, districtId);
         else
-            entities = streetService.findAllByDeletedTimeIsNull(pageable);
+            entities = streetService.findAll(pageable);
         PageDto<StreetDto> pageDto = PageDto.toDto(entities, StreetService::toDto);
         return ResponseEntity.ok(pageDto);
     }
@@ -70,13 +70,12 @@ public class StreetController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<StreetDto> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                             @Valid @RequestBody CreateStreetDto request) {
-        District parent = districtService.findByIdAndDeletedTimeIsNull(request.getDistrictId());
+        if (!districtService.existsById(request.getDistrictId()))
+            throw new DistrictNotFoundException();
         Street entity = new Street();
         entity.setName(request.getName());
-        entity.setDistrictId(parent.getId());
+        entity.setDistrictId(request.getDistrictId());
         entity.setPostCode(request.getPostCode());
-        entity.setCreatedTime(new Date());
-        entity.setCreatedUserId(authenticatedUserId);
         entity = streetService.save(entity);
         StreetDto dto = StreetService.toDto(entity);
         return ResponseEntity.created(null).body(dto);
@@ -87,10 +86,11 @@ public class StreetController {
     public ResponseEntity<StreetDto> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                              @PathVariable Long id,
                                              @Valid @RequestBody CreateStreetDto request) {
-        District parent = districtService.findByIdAndDeletedTimeIsNull(request.getDistrictId());
-        Street entity = streetService.findByIdAndDeletedTimeIsNull(id);
+        if (!districtService.existsById(request.getDistrictId()))
+            throw new DistrictNotFoundException();
+        Street entity = streetService.findById(id);
         entity.setName(request.getName());
-        entity.setDistrictId(parent.getId());
+        entity.setDistrictId(request.getDistrictId());
         entity.setPostCode(request.getPostCode());
         entity = streetService.save(entity);
         StreetDto dto = StreetService.toDto(entity);
@@ -101,10 +101,7 @@ public class StreetController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity delete(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                  @PathVariable Long id) {
-        Street entity = streetService.findByIdAndDeletedTimeIsNull(id);
-        entity.setDeletedTime(new Date());
-        entity.setDeletedUserId(authenticatedUserId);
-        streetService.save(entity);
+        streetService.deleteById(id);
         return ResponseEntity.ok("Street deleted.");
     }
 

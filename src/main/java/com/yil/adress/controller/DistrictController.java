@@ -5,7 +5,7 @@ import com.yil.adress.base.PageDto;
 import com.yil.adress.base.SortOrderConverter;
 import com.yil.adress.dto.CreateDistrictDto;
 import com.yil.adress.dto.DistrictDto;
-import com.yil.adress.model.City;
+import com.yil.adress.exception.CityNotFoundException;
 import com.yil.adress.model.District;
 import com.yil.adress.service.CityService;
 import com.yil.adress.service.DistrictService;
@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,9 +58,9 @@ public class DistrictController {
         Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
         Page<District> entities;
         if (cityId != null)
-            entities = districtService.findAllByCityIdAndDeletedTimeIsNull(pageable, cityId);
+            entities = districtService.findAllByCityId(pageable, cityId);
         else
-            entities = districtService.findAllByDeletedTimeIsNull(pageable);
+            entities = districtService.findAll(pageable);
         PageDto<DistrictDto> pageDto = PageDto.toDto(entities, DistrictService::toDto);
         return ResponseEntity.ok(pageDto);
     }
@@ -70,12 +69,11 @@ public class DistrictController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<DistrictDto> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                               @Valid @RequestBody CreateDistrictDto request) {
-        City parent = cityService.findByIdAndDeletedTimeIsNull(request.getCityId());
+        if (!cityService.existsById(request.getCityId()))
+            throw new CityNotFoundException();
         District entity = new District();
         entity.setName(request.getName());
-        entity.setCityId(parent.getId());
-        entity.setCreatedTime(new Date());
-        entity.setCreatedUserId(authenticatedUserId);
+        entity.setCityId(request.getCityId());
         entity = districtService.save(entity);
         DistrictDto dto = DistrictService.toDto(entity);
         return ResponseEntity.created(null).body(dto);
@@ -86,10 +84,11 @@ public class DistrictController {
     public ResponseEntity<DistrictDto> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                                @PathVariable Long id,
                                                @Valid @RequestBody CreateDistrictDto request) {
-        City parent = cityService.findByIdAndDeletedTimeIsNull(request.getCityId());
-        District entity = districtService.findByIdAndDeletedTimeIsNull(id);
+        if (!cityService.existsById(request.getCityId()))
+            throw new CityNotFoundException();
+        District entity = districtService.findById(id);
         entity.setName(request.getName());
-        entity.setCityId(parent.getId());
+        entity.setCityId(request.getCityId());
         entity = districtService.save(entity);
         DistrictDto dto = DistrictService.toDto(entity);
         return ResponseEntity.ok(dto);
@@ -99,10 +98,7 @@ public class DistrictController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity delete(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                  @PathVariable Long id) {
-        District entity = districtService.findByIdAndDeletedTimeIsNull(id);
-        entity.setDeletedTime(new Date());
-        entity.setDeletedUserId(authenticatedUserId);
-        districtService.save(entity);
+        districtService.deleteById(id);
         return ResponseEntity.ok("Country deleted.");
     }
 

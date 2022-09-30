@@ -5,8 +5,8 @@ import com.yil.adress.base.PageDto;
 import com.yil.adress.base.SortOrderConverter;
 import com.yil.adress.dto.CreateExteriorDoorDto;
 import com.yil.adress.dto.ExteriorDoorDto;
+import com.yil.adress.exception.StreetNotFoundException;
 import com.yil.adress.model.ExteriorDoor;
-import com.yil.adress.model.Street;
 import com.yil.adress.service.ExteriorDoorService;
 import com.yil.adress.service.StreetService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,9 +58,9 @@ public class ExteriorDoorController {
         Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
         Page<ExteriorDoor> entities;
         if (streetId != null)
-            entities = exteriorDoorService.findAllByStreetIdAndDeletedTimeIsNull(pageable, streetId);
+            entities = exteriorDoorService.findAllByStreetId(pageable, streetId);
         else
-            entities = exteriorDoorService.findAllByDeletedTimeIsNull(pageable);
+            entities = exteriorDoorService.findAll(pageable);
         PageDto<ExteriorDoorDto> pageDto = PageDto.toDto(entities, ExteriorDoorService::toDto);
         return ResponseEntity.ok(pageDto);
     }
@@ -70,12 +69,11 @@ public class ExteriorDoorController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ExteriorDoorDto> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                                   @Valid @RequestBody CreateExteriorDoorDto request) {
-        Street parent = streetService.findByIdAndDeletedTimeIsNull(request.getStreetId());
+        if (!streetService.existsById(request.getStreetId()))
+            throw new StreetNotFoundException();
         ExteriorDoor entity = new ExteriorDoor();
         entity.setName(request.getName());
-        entity.setStreetId(parent.getId());
-        entity.setCreatedTime(new Date());
-        entity.setCreatedUserId(authenticatedUserId);
+        entity.setStreetId(request.getStreetId());
         entity = exteriorDoorService.save(entity);
         ExteriorDoorDto dto = ExteriorDoorService.toDto(entity);
         return ResponseEntity.created(null).body(dto);
@@ -86,10 +84,11 @@ public class ExteriorDoorController {
     public ResponseEntity<ExteriorDoorDto> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                                    @PathVariable Long id,
                                                    @Valid @RequestBody CreateExteriorDoorDto request) {
-        Street parent = streetService.findByIdAndDeletedTimeIsNull(request.getStreetId());
-        ExteriorDoor entity = exteriorDoorService.findByIdAndDeletedTimeIsNull(id);
+        if (!streetService.existsById(request.getStreetId()))
+            throw new StreetNotFoundException();
+        ExteriorDoor entity = exteriorDoorService.findById(id);
         entity.setName(request.getName());
-        entity.setStreetId(parent.getId());
+        entity.setStreetId(request.getStreetId());
         entity = exteriorDoorService.save(entity);
         ExteriorDoorDto dto = ExteriorDoorService.toDto(entity);
         return ResponseEntity.ok(dto);
@@ -99,10 +98,7 @@ public class ExteriorDoorController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> delete(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                          @PathVariable Long id) {
-        ExteriorDoor entity = exteriorDoorService.findByIdAndDeletedTimeIsNull(id);
-        entity.setDeletedTime(new Date());
-        entity.setDeletedUserId(authenticatedUserId);
-        exteriorDoorService.save(entity);
+        exteriorDoorService.deleteById(id);
         return ResponseEntity.ok("Exterior door deleted.");
     }
 }

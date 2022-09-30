@@ -34,23 +34,22 @@ public class ExteriorDoorService {
     }
 
     public ExteriorDoor findById(Long id) throws ExteriorDoorNotFoundException {
-        return exteriorDoorRepository.findById(id).orElseThrow(() -> {
-            throw new ExteriorDoorNotFoundException();
-        });
+        return exteriorDoorRepository.findById(id).orElseThrow(ExteriorDoorNotFoundException::new);
     }
 
-    public ExteriorDoor findByIdAndDeletedTimeIsNull(Long id) throws ExteriorDoorNotFoundException {
-        ExteriorDoor exteriorDoor = exteriorDoorRepository.findByIdAndDeletedTimeIsNull(id);
-        if (exteriorDoor == null)
-            throw new ExteriorDoorNotFoundException();
-        return exteriorDoor;
+    public Page<ExteriorDoor> findAll(Pageable pageable) {
+        return exteriorDoorRepository.findAll(pageable);
     }
 
-    public Page<ExteriorDoor> findAllByDeletedTimeIsNull(Pageable pageable) {
-        return exteriorDoorRepository.findAllByDeletedTimeIsNull(pageable);
+    public Page<ExteriorDoor> findAllByStreetId(Pageable pageable, Long streetId) {
+        return exteriorDoorRepository.findAllByStreetId(pageable, streetId);
     }
 
-    public Page<ExteriorDoor> findAllByStreetIdAndDeletedTimeIsNull(Pageable pageable, Long streetId) {
-        return exteriorDoorRepository.findAllByStreetIdAndDeletedTimeIsNull(pageable, streetId);
+    public void deleteById(long id) {
+        exteriorDoorRepository.deleteById(id);
+    }
+
+    public boolean existsById(long id) {
+        return exteriorDoorRepository.existsById(id);
     }
 }
