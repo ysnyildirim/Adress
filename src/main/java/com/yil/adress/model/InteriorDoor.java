@@ -2,6 +2,8 @@ package com.yil.adress.model;
 
 import com.yil.adress.base.IEntity;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -22,8 +24,10 @@ public class InteriorDoor implements IEntity {
     private String name;
     @Column(name = "EXTERIOR_DOOR_ID", nullable = false)
     private Long exteriorDoorId;
-    @Column(name = "IS_ACTIVE", nullable = false)
-    private Boolean isActive;
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    @ColumnDefault(value = "0")
+    @Column(name = "ENABLED", nullable = false)
+    private Boolean enabled;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "CREATED_DATE")
     private Date createdDate;

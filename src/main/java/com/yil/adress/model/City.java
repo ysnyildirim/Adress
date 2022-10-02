@@ -2,6 +2,8 @@ package com.yil.adress.model;
 
 import com.yil.adress.base.IEntity;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -26,10 +28,10 @@ public class City implements IEntity {
     private Long countryId;
     @Column(name = "PHONE_CODE", length = 3)
     private String phoneCode;
-
-
-    @Column(name = "IS_ACTIVE", nullable = false)
-    private Boolean isActive;
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    @ColumnDefault(value = "0")
+    @Column(name = "ENABLED", nullable = false)
+    private Boolean enabled;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "CREATED_DATE")
     private Date createdDate;
