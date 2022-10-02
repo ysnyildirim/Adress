@@ -14,8 +14,7 @@ public class Country implements IEntity {
     @Id
     @SequenceGenerator(name = "COUNTRY_SEQUENCE_GENERATOR",
             sequenceName = "SEQ_COUNTRY_ID",
-            schema = "ADR",
-            allocationSize = 1)
+            schema = "ADR")
     @GeneratedValue(generator = "COUNTRY_SEQUENCE_GENERATOR")
     @Column(name = "ID", nullable = false, unique = true)
     private Long id;

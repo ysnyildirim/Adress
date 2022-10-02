@@ -14,8 +14,7 @@ public class City implements IEntity {
     @Id
     @SequenceGenerator(name = "CITY_SEQUENCE_GENERATOR",
             sequenceName = "SEQ_CITY_ID",
-            schema = "ADR",
-            allocationSize = 1)
+            schema = "ADR")
     @GeneratedValue(generator = "CITY_SEQUENCE_GENERATOR")
     @Column(name = "ID", nullable = false, unique = true)
     private Long id;

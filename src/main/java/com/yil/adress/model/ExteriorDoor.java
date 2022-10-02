@@ -14,8 +14,7 @@ public class ExteriorDoor implements IEntity {
     @Id
     @SequenceGenerator(name = "EXTERIOR_DOOR_SEQUENCE_GENERATOR",
             sequenceName = "SEQ_EXTERIOR_DOOR_ID",
-            schema = "ADR",
-            allocationSize = 1)
+            schema = "ADR")
     @GeneratedValue(generator = "EXTERIOR_DOOR_SEQUENCE_GENERATOR")
     @Column(name = "ID", nullable = false, unique = true)
     private Long id;

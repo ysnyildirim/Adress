@@ -14,8 +14,7 @@ public class Street implements IEntity {
     @Id
     @SequenceGenerator(name = "STREET_SEQUENCE_GENERATOR",
             sequenceName = "SEQ_STREET_ID",
-            schema = "ADR",
-            allocationSize = 1)
+            schema = "ADR")
     @GeneratedValue(generator = "STREET_SEQUENCE_GENERATOR")
     @Column(name = "ID", nullable = false, unique = true)
     private Long id;

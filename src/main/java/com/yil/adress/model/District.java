@@ -14,8 +14,7 @@ public class District implements IEntity {
     @Id
     @SequenceGenerator(name = "DISTRICT_SEQUENCE_GENERATOR",
             sequenceName = "SEQ_DISTRICT_ID",
-            schema = "ADR",
-            allocationSize = 1)
+            schema = "ADR")
     @GeneratedValue(generator = "DISTRICT_SEQUENCE_GENERATOR")
     @Column(name = "ID", nullable = false, unique = true)
     private Long id;

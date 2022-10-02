@@ -14,8 +14,7 @@ public class InteriorDoor implements IEntity {
     @Id
     @SequenceGenerator(name = "INTERIOR_DOOR_SEQUENCE_GENERATOR",
             sequenceName = "SEQ_INTERIOR_DOOR_ID",
-            schema = "ADR",
-            allocationSize = 1)
+            schema = "ADR")
     @GeneratedValue(generator = "INTERIOR_DOOR_SEQUENCE_GENERATOR")
     @Column(name = "ID", nullable = false, unique = true)
     private Long id;
