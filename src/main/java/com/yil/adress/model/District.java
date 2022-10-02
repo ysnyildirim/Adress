@@ -13,6 +13,8 @@ import java.util.Date;
 @Table(schema = "ADR",
         name = "DISTRICT")
 public class District implements IEntity {
+    @Column(name = "NAME", nullable = false, length = 100)
+    public String name;
     @Id
     @SequenceGenerator(name = "DISTRICT_SEQUENCE_GENERATOR",
             sequenceName = "SEQ_DISTRICT_ID",
@@ -22,10 +24,6 @@ public class District implements IEntity {
     private Long id;
     @Column(name = "CITY_ID", nullable = false)
     private Long cityId;
-    @Column(name = "NAME", nullable = false, length = 100)
-    public String name;
-
-
     @Type(type = "org.hibernate.type.NumericBooleanType")
     @ColumnDefault(value = "0")
     @Column(name = "ENABLED", nullable = false)

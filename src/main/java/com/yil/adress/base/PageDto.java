@@ -30,5 +30,4 @@ public class PageDto<T> {
                 .content(list)
                 .build();
     }
-
 }

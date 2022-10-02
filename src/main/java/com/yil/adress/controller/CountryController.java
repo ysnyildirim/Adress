@@ -26,7 +26,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/address/v1/countries")
 public class CountryController {
-
     private final CountryService countryService;
 
     @Autowired
@@ -90,6 +89,4 @@ public class CountryController {
         countryService.deleteById(id);
         return ResponseEntity.ok("Country deleted.");
     }
-
-
 }

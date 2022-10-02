@@ -27,7 +27,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/address/v1/interior-doors")
 public class InteriorDoorController {
-
     private final InteriorDoorService interiorDoorService;
     private final ExteriorDoorService exteriorDoorService;
 

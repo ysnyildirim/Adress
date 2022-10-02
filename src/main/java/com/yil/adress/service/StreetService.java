@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class StreetService {
-
     private final StreetRepository streetRepository;
 
     @Autowired

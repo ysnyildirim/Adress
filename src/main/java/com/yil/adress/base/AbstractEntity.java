@@ -13,7 +13,6 @@ import java.util.Date;
 @Setter
 @MappedSuperclass
 public abstract class AbstractEntity implements IEntity {
-
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "CREATED_TIME")
     private Date createdTime;

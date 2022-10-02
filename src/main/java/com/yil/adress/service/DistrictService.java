@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DistrictService {
-
     private final DistrictRepository districtRepository;
 
     @Autowired
@@ -45,13 +44,11 @@ public class DistrictService {
         return districtRepository.findAllByCityId(pageable, cityId);
     }
 
-
     public void deleteById(long id) {
         districtRepository.deleteById(id);
     }
 
-
-    public boolean existsById (long id ) {
+    public boolean existsById(long id) {
         return districtRepository.existsById(id);
     }
 }

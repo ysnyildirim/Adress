@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CountryService {
-
     private final CountryRepository countryRepository;
 
     @Autowired
@@ -42,12 +41,11 @@ public class CountryService {
         return countryRepository.findById(id).orElseThrow(CountryNotFoundException::new);
     }
 
-    public boolean existsById (long id ) {
+    public boolean existsById(long id) {
         return countryRepository.existsById(id);
     }
 
     public void deleteById(long id) {
         countryRepository.deleteById(id);
     }
-
 }

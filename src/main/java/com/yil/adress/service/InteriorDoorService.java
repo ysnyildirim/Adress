@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class InteriorDoorService {
-
     private final InteriorDoorRepository interiorDoorRepository;
 
     @Autowired
@@ -42,7 +41,6 @@ public class InteriorDoorService {
         return interiorDoorRepository.findById(id).orElseThrow(InteriorDoorNotFoundException::new);
     }
 
-
     public Page<InteriorDoor> findByExteriorDoorId(Pageable pageable, Long exteriorDoorId) {
         return interiorDoorRepository.findByExteriorDoorId(pageable, exteriorDoorId);
     }
@@ -58,5 +56,4 @@ public class InteriorDoorService {
     public void deleteById(long id) {
         interiorDoorRepository.deleteById(id);
     }
-
 }

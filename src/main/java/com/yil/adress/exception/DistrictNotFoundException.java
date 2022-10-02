@@ -10,5 +10,4 @@ import javax.persistence.EntityNotFoundException;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 @ApiException(code = ErrorCode.DistrictNotFound)
 public class DistrictNotFoundException extends EntityNotFoundException {
-
 }

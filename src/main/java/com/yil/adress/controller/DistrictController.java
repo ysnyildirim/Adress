@@ -27,7 +27,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/address/v1/districts")
 public class DistrictController {
-
     private final DistrictService districtService;
     private final CityService cityService;
 
@@ -101,5 +100,4 @@ public class DistrictController {
         districtService.deleteById(id);
         return ResponseEntity.ok("Country deleted.");
     }
-
 }

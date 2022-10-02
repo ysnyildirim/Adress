@@ -8,6 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DistrictRepository extends JpaRepository<District, Long> {
-
     Page<District> findAllByCityId(Pageable pageable, Long cityId);
 }

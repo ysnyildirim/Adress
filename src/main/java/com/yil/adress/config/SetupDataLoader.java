@@ -8,15 +8,10 @@ import java.util.Date;
 
 @Component
 public class SetupDataLoader implements ApplicationListener<ContextStartedEvent> {
-
-
     @Override
     public void onApplicationEvent(ContextStartedEvent event) {
         System.out.println("Start Up Events");
         System.out.println(new Date(event.getTimestamp()));
         System.out.println("----------------------");
-
-
     }
-
 }

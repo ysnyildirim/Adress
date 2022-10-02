@@ -6,7 +6,6 @@ import com.yil.adress.base.SortOrderConverter;
 import com.yil.adress.dto.CreateStreetDto;
 import com.yil.adress.dto.StreetDto;
 import com.yil.adress.exception.DistrictNotFoundException;
-import com.yil.adress.model.District;
 import com.yil.adress.model.Street;
 import com.yil.adress.service.DistrictService;
 import com.yil.adress.service.StreetService;
@@ -28,7 +27,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/address/v1/streets")
 public class StreetController {
-
     private final StreetService streetService;
     private final DistrictService districtService;
 
@@ -104,6 +102,4 @@ public class StreetController {
         streetService.deleteById(id);
         return ResponseEntity.ok("Street deleted.");
     }
-
-
 }

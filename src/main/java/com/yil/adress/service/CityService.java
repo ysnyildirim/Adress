@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CityService {
-
     private final CityRepository cityRepository;
 
     @Autowired
@@ -51,8 +50,7 @@ public class CityService {
         return cityRepository.findAll(pageable);
     }
 
-    public boolean existsById (long id ) {
+    public boolean existsById(long id) {
         return cityRepository.existsById(id);
     }
-
 }

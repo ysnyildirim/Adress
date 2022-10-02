@@ -24,5 +24,4 @@ public class CreateCityDto {
     private Long countryId;
     @Length(min = 1, max = 5)
     private String phoneCode;
-
 }

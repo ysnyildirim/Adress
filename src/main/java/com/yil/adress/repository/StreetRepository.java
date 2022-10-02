@@ -8,8 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StreetRepository extends JpaRepository<Street, Long> {
-
     Page<Street> findAllByDistrictId(Pageable pageable, Long district);
-
-
 }
