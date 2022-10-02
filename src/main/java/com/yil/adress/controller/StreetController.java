@@ -78,7 +78,7 @@ public class StreetController {
         entity.setPostCode(request.getPostCode());
         entity = streetService.save(entity);
         StreetDto dto = StreetService.toDto(entity);
-        return ResponseEntity.created(null).body(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @PutMapping(value = "/{id}")

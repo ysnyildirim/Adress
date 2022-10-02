@@ -76,7 +76,7 @@ public class InteriorDoorController {
         entity.setExteriorDoorId(request.getExteriorDoorId());
         entity = interiorDoorService.save(entity);
         InteriorDoorDto dto = InteriorDoorService.toDto(entity);
-        return ResponseEntity.created(null).body(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @PutMapping(value = "/{id}")

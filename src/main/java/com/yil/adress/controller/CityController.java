@@ -73,7 +73,7 @@ public class CityController {
         entity.setPhoneCode(request.getPhoneCode());
         entity = cityService.save(entity);
         CityDto dto = CityService.toDto(entity);
-        return ResponseEntity.created(null).body(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @PutMapping(value = "/{id}")

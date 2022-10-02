@@ -76,7 +76,7 @@ public class DistrictController {
         entity.setCityId(request.getCityId());
         entity = districtService.save(entity);
         DistrictDto dto = DistrictService.toDto(entity);
-        return ResponseEntity.created(null).body(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @PutMapping(value = "/{id}")

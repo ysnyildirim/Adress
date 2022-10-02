@@ -67,7 +67,7 @@ public class CountryController {
         entity.setName(request.getName());
         entity = countryService.save(entity);
         CountryDto dto = CountryService.toDto(entity);
-        return ResponseEntity.created(null).body(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @PutMapping(value = "/{id}")
