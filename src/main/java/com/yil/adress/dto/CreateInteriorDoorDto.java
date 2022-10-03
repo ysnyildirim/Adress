@@ -19,4 +19,6 @@ public class CreateInteriorDoorDto {
     private String name;
     @NotNull
     private Long exteriorDoorId;
+    @NotNull
+    private Boolean enabled;
 }

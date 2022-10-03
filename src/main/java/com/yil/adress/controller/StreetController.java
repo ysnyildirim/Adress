@@ -1,12 +1,14 @@
 package com.yil.adress.controller;
 
 import com.yil.adress.base.ApiConstant;
+import com.yil.adress.base.Mapper;
 import com.yil.adress.base.PageDto;
 import com.yil.adress.base.SortOrderConverter;
-import com.yil.adress.dto.CreateStreetDto;
-import com.yil.adress.dto.StreetDto;
+import com.yil.adress.dto.*;
 import com.yil.adress.exception.DistrictNotFoundException;
+import com.yil.adress.model.Country;
 import com.yil.adress.model.Street;
+import com.yil.adress.service.CountryService;
 import com.yil.adress.service.DistrictService;
 import com.yil.adress.service.StreetService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +27,11 @@ import java.util.List;
  * Created by yasin.yildirim on 3.05.2022.
  */
 @RestController
-@RequestMapping("/api/address/v1/streets")
+@RequestMapping("/api/adr/v1/streets")
 public class StreetController {
     private final StreetService streetService;
     private final DistrictService districtService;
+    private final Mapper<Street, StreetDto> mapper = new Mapper<>(StreetService::toDto);
 
     @Autowired
     public StreetController(StreetService streetService, DistrictService districtService) {
@@ -55,44 +58,28 @@ public class StreetController {
             size = 1000;
         List<Sort.Order> orders = new SortOrderConverter(new String[]{"name"}).convert(sort);
         Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
-        Page<Street> entities;
-        if (districtId != null)
-            entities = streetService.findAllByDistrictId(pageable, districtId);
-        else
-            entities = streetService.findAll(pageable);
-        PageDto<StreetDto> pageDto = PageDto.toDto(entities, StreetService::toDto);
-        return ResponseEntity.ok(pageDto);
+        return ResponseEntity.ok(mapper.map(streetService.findAll(pageable)));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<StreetDto> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
-                                            @Valid @RequestBody CreateStreetDto request) {
-        if (!districtService.existsById(request.getDistrictId()))
+    public ResponseEntity<StreetResponse> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+                                                 @Valid @RequestBody CreateStreetDto dto) {
+        if (!districtService.existsById(dto.getDistrictId()))
             throw new DistrictNotFoundException();
-        Street entity = new Street();
-        entity.setName(request.getName());
-        entity.setDistrictId(request.getDistrictId());
-        entity.setPostCode(request.getPostCode());
-        entity = streetService.save(entity);
-        StreetDto dto = StreetService.toDto(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+        Street street = streetService.save(dto, authenticatedUserId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(StreetResponse.builder().id(street.getId()).build());
     }
 
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<StreetDto> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
-                                             @PathVariable Long id,
-                                             @Valid @RequestBody CreateStreetDto request) {
+    public ResponseEntity<String> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+                                          @PathVariable Long id,
+                                          @Valid @RequestBody CreateStreetDto request) {
         if (!districtService.existsById(request.getDistrictId()))
             throw new DistrictNotFoundException();
-        Street entity = streetService.findById(id);
-        entity.setName(request.getName());
-        entity.setDistrictId(request.getDistrictId());
-        entity.setPostCode(request.getPostCode());
-        entity = streetService.save(entity);
-        StreetDto dto = StreetService.toDto(entity);
-        return ResponseEntity.ok(dto);
+        streetService.replace(id, request, authenticatedUserId);
+        return ResponseEntity.ok().body("Street updated.");
     }
 
     @DeleteMapping(value = "/{id}")

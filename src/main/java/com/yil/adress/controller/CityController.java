@@ -1,10 +1,14 @@
 package com.yil.adress.controller;
 
+import com.yil.adress.base.Mapper;
 import com.yil.adress.base.ApiConstant;
 import com.yil.adress.base.PageDto;
 import com.yil.adress.base.SortOrderConverter;
 import com.yil.adress.dto.CityDto;
+import com.yil.adress.dto.CityResponse;
+import com.yil.adress.dto.CountryResponse;
 import com.yil.adress.dto.CreateCityDto;
+import com.yil.adress.exception.CountryNotFoundException;
 import com.yil.adress.model.City;
 import com.yil.adress.model.Country;
 import com.yil.adress.service.CityService;
@@ -22,10 +26,11 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/address/v1/cities")
+@RequestMapping("/api/adr/v1/cities")
 public class CityController {
     private final CityService cityService;
     private final CountryService countryService;
+    private final Mapper<City, CityDto> mapper = new Mapper<>(CityService::toDto);
 
     @Autowired
     public CityController(CityService cityService, CountryService countryService) {
@@ -51,44 +56,25 @@ public class CityController {
             size = 1000;
         List<Sort.Order> orders = new SortOrderConverter(new String[]{"name"}).convert(sort);
         Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
-        Page<City> city;
-        if (countryId != null)
-            city = cityService.findAllByCountryId(pageable, countryId);
-        else
-            city = cityService.findAll(pageable);
-        PageDto<CityDto> pageDto = PageDto.toDto(city, CityService::toDto);
-        return ResponseEntity.ok(pageDto);
+        return ResponseEntity.ok(mapper.map(cityService.findAll(pageable)));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<CityDto> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
-                                          @Valid @RequestBody CreateCityDto request) {
-        Country country = countryService.findById(request.getCountryId());
-        City entity = new City();
-        entity.setName(request.getName());
-        entity.setCode(request.getCode());
-        entity.setCountryId(country.getId());
-        entity.setPhoneCode(request.getPhoneCode());
-        entity = cityService.save(entity);
-        CityDto dto = CityService.toDto(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+    public ResponseEntity<CityResponse> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+                                               @Valid @RequestBody CreateCityDto request) throws CountryNotFoundException {
+        City city = cityService.save(request, authenticatedUserId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(CityResponse.builder().id(city.getId()).build());
+
     }
 
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<CityDto> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
-                                           @PathVariable Long id,
-                                           @Valid @RequestBody CreateCityDto request) {
-        Country country = countryService.findById(request.getCountryId());
-        City entity = cityService.findById(id);
-        entity.setName(request.getName());
-        entity.setCode(request.getCode());
-        entity.setPhoneCode(request.getPhoneCode());
-        entity.setCountryId(country.getId());
-        entity = cityService.save(entity);
-        CityDto dto = CityService.toDto(entity);
-        return ResponseEntity.ok(dto);
+    public ResponseEntity<String> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+                                          @PathVariable Long id,
+                                          @Valid @RequestBody CreateCityDto request) throws CountryNotFoundException {
+        cityService.replace(id, request, authenticatedUserId);
+        return ResponseEntity.ok().body("City updated.");
     }
 
     @DeleteMapping(value = "/{id}")

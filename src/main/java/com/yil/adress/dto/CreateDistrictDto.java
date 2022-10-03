@@ -19,4 +19,6 @@ public class CreateDistrictDto {
     private String name;
     @NotNull
     private Long cityId;
+    @NotNull
+    private Boolean enabled;
 }

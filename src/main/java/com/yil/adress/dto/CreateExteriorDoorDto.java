@@ -19,4 +19,6 @@ public class CreateExteriorDoorDto {
     private String name;
     @NotNull
     private Long streetId;
+    @NotNull
+    private Boolean enabled;
 }

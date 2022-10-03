@@ -1,10 +1,13 @@
 package com.yil.adress.controller;
 
+import com.yil.adress.base.Mapper;
 import com.yil.adress.base.ApiConstant;
 import com.yil.adress.base.PageDto;
 import com.yil.adress.base.SortOrderConverter;
 import com.yil.adress.dto.CountryDto;
+import com.yil.adress.dto.CountryResponse;
 import com.yil.adress.dto.CreateCountryDto;
+import com.yil.adress.exception.CountryNotFoundException;
 import com.yil.adress.model.Country;
 import com.yil.adress.service.CountryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +27,10 @@ import java.util.List;
  * Created by yasin.yildirim on 3.05.2022.
  */
 @RestController
-@RequestMapping("/api/address/v1/countries")
+@RequestMapping("/api/adr/v1/countries")
 public class CountryController {
     private final CountryService countryService;
+    private final Mapper<Country, CountryDto> mapper = new Mapper<>(CountryService::toDto);
 
     @Autowired
     public CountryController(CountryService countryService) {
@@ -34,7 +38,7 @@ public class CountryController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<CountryDto> findById(@NotNull @PathVariable Long id) {
+    public ResponseEntity<CountryDto> findById(@NotNull @PathVariable Long id) throws CountryNotFoundException {
         Country entity = countryService.findById(id);
         CountryDto dto = CountryService.toDto(entity);
         return ResponseEntity.ok(dto);
@@ -51,35 +55,25 @@ public class CountryController {
             size = 1000;
         List<Sort.Order> orders = new SortOrderConverter(new String[]{"name", "code"}).convert(sort);
         Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
-        Page<Country> city = countryService.findAll(pageable);
-        PageDto<CountryDto> pageDto = PageDto.toDto(city, CountryService::toDto);
-        return ResponseEntity.ok(pageDto);
+        return ResponseEntity.ok(mapper.map(countryService.findAll(pageable)));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<CountryDto> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
-                                             @RequestBody @Valid CreateCountryDto request) {
-        Country entity = new Country();
-        entity.setCode(request.getCode());
-        entity.setPhoneCode(request.getPhoneCode());
-        entity.setName(request.getName());
-        entity = countryService.save(entity);
-        CountryDto dto = CountryService.toDto(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+    public ResponseEntity<CountryResponse> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+                                                  @RequestBody @Valid CreateCountryDto dto) {
+
+        Country country = countryService.save(dto, authenticatedUserId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(CountryResponse.builder().id(country.getId()).build());
     }
 
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<CountryDto> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
-                                              @PathVariable Long id,
-                                              @RequestBody @Valid CreateCountryDto request) {
-        Country entity = countryService.findById(id);
-        entity.setCode(request.getCode());
-        entity.setName(request.getName());
-        entity = countryService.save(entity);
-        CountryDto dto = CountryService.toDto(entity);
-        return ResponseEntity.ok(dto);
+    public ResponseEntity<String> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+                                          @PathVariable Long id,
+                                          @RequestBody @Valid CreateCountryDto dto) throws CountryNotFoundException {
+        countryService.replace(id, dto, authenticatedUserId);
+        return ResponseEntity.ok().body("Country updated.");
     }
 
     @DeleteMapping(value = "/{id}")

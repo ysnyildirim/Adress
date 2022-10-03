@@ -21,4 +21,6 @@ public class CreateStreetDto {
     private Long districtId;
     @Length(min = 1, max = 5)
     private String postCode;
+    @NotNull
+    private Boolean enabled;
 }

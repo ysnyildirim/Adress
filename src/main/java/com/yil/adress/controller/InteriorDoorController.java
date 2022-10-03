@@ -1,12 +1,14 @@
 package com.yil.adress.controller;
 
+import com.yil.adress.base.Mapper;
 import com.yil.adress.base.ApiConstant;
 import com.yil.adress.base.PageDto;
 import com.yil.adress.base.SortOrderConverter;
-import com.yil.adress.dto.CreateInteriorDoorDto;
-import com.yil.adress.dto.InteriorDoorDto;
+import com.yil.adress.dto.*;
 import com.yil.adress.exception.ExteriorDoorNotFoundException;
+import com.yil.adress.model.Country;
 import com.yil.adress.model.InteriorDoor;
+import com.yil.adress.service.CountryService;
 import com.yil.adress.service.ExteriorDoorService;
 import com.yil.adress.service.InteriorDoorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +27,11 @@ import java.util.List;
  * Created by yasin.yildirim on 3.05.2022.
  */
 @RestController
-@RequestMapping("/api/address/v1/interior-doors")
+@RequestMapping("/api/adr/v1/interior-doors")
 public class InteriorDoorController {
     private final InteriorDoorService interiorDoorService;
     private final ExteriorDoorService exteriorDoorService;
+    private final Mapper<InteriorDoor, InteriorDoorDto> mapper = new Mapper<>(InteriorDoorService::toDto);
 
     @Autowired
     public InteriorDoorController(InteriorDoorService interiorDoorService, ExteriorDoorService exteriorDoorService) {
@@ -55,42 +58,29 @@ public class InteriorDoorController {
             size = 1000;
         List<Sort.Order> orders = new SortOrderConverter(new String[]{"name"}).convert(sort);
         Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
-        Page<InteriorDoor> entities;
-        if (exteriorDoorId != null)
-            entities = interiorDoorService.findByExteriorDoorId(pageable, exteriorDoorId);
-        else
-            entities = interiorDoorService.findAll(pageable);
-        PageDto<InteriorDoorDto> pageDto = PageDto.toDto(entities, InteriorDoorService::toDto);
-        return ResponseEntity.ok(pageDto);
+        return ResponseEntity.ok(mapper.map(interiorDoorService.findAll(pageable)));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<InteriorDoorDto> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
-                                                  @Valid @RequestBody CreateInteriorDoorDto request) {
+    public ResponseEntity<InteriorDoorResponse> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+                                                       @Valid @RequestBody CreateInteriorDoorDto request) {
         if (!exteriorDoorService.existsById(request.getExteriorDoorId()))
             throw new ExteriorDoorNotFoundException();
-        InteriorDoor entity = new InteriorDoor();
-        entity.setName(request.getName());
-        entity.setExteriorDoorId(request.getExteriorDoorId());
-        entity = interiorDoorService.save(entity);
-        InteriorDoorDto dto = InteriorDoorService.toDto(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+
+        InteriorDoor interiorDoor = interiorDoorService.save(request, authenticatedUserId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(InteriorDoorResponse.builder().id(interiorDoor.getId()).build());
     }
 
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<InteriorDoorDto> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
-                                                   @PathVariable Long id,
-                                                   @Valid @RequestBody CreateInteriorDoorDto request) {
+    public ResponseEntity<String> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+                                          @PathVariable Long id,
+                                          @Valid @RequestBody CreateInteriorDoorDto request) {
         if (!exteriorDoorService.existsById(request.getExteriorDoorId()))
             throw new ExteriorDoorNotFoundException();
-        InteriorDoor entity = interiorDoorService.findByIdAndDeletedTimeIsNull(id);
-        entity.setName(request.getName());
-        entity.setExteriorDoorId(request.getExteriorDoorId());
-        entity = interiorDoorService.save(entity);
-        InteriorDoorDto dto = InteriorDoorService.toDto(entity);
-        return ResponseEntity.ok(dto);
+        interiorDoorService.replace(id, request, authenticatedUserId);
+        return ResponseEntity.ok().body("Interior door updated.");
     }
 
     @DeleteMapping(value = "/{id}")
