@@ -29,9 +29,9 @@ public class District implements IEntity {
     @Column(name = "ENABLED", nullable = false)
     private Boolean enabled;
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "CREATED_DATE")
+    @Column(name = "CREATED_DATE", updatable = false)
     private Date createdDate;
-    @Column(name = "CREATED_USER_ID")
+    @Column(name = "CREATED_USER_ID", updatable = false)
     private Long createdUserId;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "LAST_MODIFY_DATE")
