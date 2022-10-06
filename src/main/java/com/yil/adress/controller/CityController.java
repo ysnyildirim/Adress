@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -38,6 +39,7 @@ public class CityController {
         this.countryService = countryService;
     }
 
+    @Operation(summary = "Id bazlı şehir bilgilerini getirir.")
     @GetMapping(value = "/{id}")
     public ResponseEntity<CityDto> findById(@PathVariable Long id) {
         City city = cityService.findById(id);
@@ -45,6 +47,7 @@ public class CityController {
         return ResponseEntity.ok(dto);
     }
 
+    @Operation(summary = "Tüm şehirlere ait bilgileri getirir.")
     @GetMapping
     public ResponseEntity<PageDto<CityDto>> findAll(@RequestParam(required = false) Long countryId,
                                                     @RequestParam(required = false, defaultValue = ApiConstant.PAGE) int page,
@@ -59,6 +62,7 @@ public class CityController {
         return ResponseEntity.ok(mapper.map(cityService.findAll(pageable)));
     }
 
+    @Operation(summary = "Yeni bir şehir bilgisi eklemek için kullanılır.")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CityResponse> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
@@ -68,20 +72,23 @@ public class CityController {
 
     }
 
+    @Operation(summary = "İd bazlı şehir bilgisi güncellemek için kullanılır.")
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
-                                          @PathVariable Long id,
-                                          @Valid @RequestBody CreateCityDto request) throws CountryNotFoundException {
-        cityService.replace(id, request, authenticatedUserId);
-        return ResponseEntity.ok().body("City updated.");
+    public ResponseEntity<CityResponse> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
+                                                @PathVariable Long id,
+                                                @Valid @RequestBody CreateCityDto request) throws CountryNotFoundException {
+        City city = cityService.replace(id, request, authenticatedUserId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(CityResponse.builder().id(city.getId()).build());
     }
 
+    @Operation(summary = "İd bazlı şehir bilgisi silmek için kullanılır.")
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> delete(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                          @PathVariable Long id) {
         cityService.deleteById(id);
         return ResponseEntity.ok("City deleted.");
+
     }
 }

@@ -11,6 +11,7 @@ import com.yil.adress.model.InteriorDoor;
 import com.yil.adress.service.CountryService;
 import com.yil.adress.service.ExteriorDoorService;
 import com.yil.adress.service.InteriorDoorService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,6 +40,7 @@ public class InteriorDoorController {
         this.exteriorDoorService = exteriorDoorService;
     }
 
+    @Operation(summary = "Id bazlı iç kapı/daire numarası bilgilerini getirir.")
     @GetMapping(value = "/{id}")
     public ResponseEntity<InteriorDoorDto> findById(@PathVariable Long id) {
         InteriorDoor entity = interiorDoorService.findById(id);
@@ -46,6 +48,7 @@ public class InteriorDoorController {
         return ResponseEntity.ok(dto);
     }
 
+    @Operation(summary = "Tüm iç kapı/daire numarası bilgilerini getirir.")
     @GetMapping
     public ResponseEntity<PageDto<InteriorDoorDto>> findAll(
             @RequestParam(required = false) Long exteriorDoorId,
@@ -61,6 +64,7 @@ public class InteriorDoorController {
         return ResponseEntity.ok(mapper.map(interiorDoorService.findAll(pageable)));
     }
 
+    @Operation(summary = "Yeni bir iç kapı/daire numarası bilgisi eklemek için kullanılır.")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<InteriorDoorResponse> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
@@ -72,6 +76,7 @@ public class InteriorDoorController {
         return ResponseEntity.status(HttpStatus.CREATED).body(InteriorDoorResponse.builder().id(interiorDoor.getId()).build());
     }
 
+    @Operation(summary = "Id bazlı iç kapı/daire numarası bilgisi güncellemek için kullanılır.")
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
@@ -83,6 +88,7 @@ public class InteriorDoorController {
         return ResponseEntity.ok().body("Interior door updated.");
     }
 
+    @Operation(summary = "Id bazlı iç kapı/daire numarası bilgisi silmek için kullanılır.")
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity delete(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,

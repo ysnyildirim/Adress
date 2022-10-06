@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -37,6 +38,7 @@ public class CountryController {
         this.countryService = countryService;
     }
 
+    @Operation(summary = "Id bazlı ülke bilgilerini getirir.")
     @GetMapping(value = "/{id}")
     public ResponseEntity<CountryDto> findById(@NotNull @PathVariable Long id) throws CountryNotFoundException {
         Country entity = countryService.findById(id);
@@ -44,6 +46,7 @@ public class CountryController {
         return ResponseEntity.ok(dto);
     }
 
+    @Operation(summary = "Tüm ülkelere ait bilgileri getirir.")
     @GetMapping
     public ResponseEntity<PageDto<CountryDto>> findAll(
             @RequestParam(required = false, defaultValue = ApiConstant.PAGE) int page,
@@ -58,6 +61,7 @@ public class CountryController {
         return ResponseEntity.ok(mapper.map(countryService.findAll(pageable)));
     }
 
+    @Operation(summary = "Yeni bir ülke bilgisi eklemek için kullanılır.")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CountryResponse> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
@@ -67,6 +71,7 @@ public class CountryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(CountryResponse.builder().id(country.getId()).build());
     }
 
+    @Operation(summary = "İd bazlı ülke bilgisi güncellemek için kullanılır.")
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
@@ -76,6 +81,7 @@ public class CountryController {
         return ResponseEntity.ok().body("Country updated.");
     }
 
+    @Operation(summary = "İd bazlı ülke bilgisi silmek için kullanılır.")
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity delete(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,

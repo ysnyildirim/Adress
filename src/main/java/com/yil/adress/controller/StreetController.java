@@ -11,6 +11,7 @@ import com.yil.adress.model.Street;
 import com.yil.adress.service.CountryService;
 import com.yil.adress.service.DistrictService;
 import com.yil.adress.service.StreetService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,6 +40,7 @@ public class StreetController {
         this.districtService = districtService;
     }
 
+    @Operation(summary = "Id bazlı cadde/sokak bilgilerini getirir.")
     @GetMapping(value = "/{id}")
     public ResponseEntity<StreetDto> findById(@PathVariable Long id) {
         Street entity = streetService.findById(id);
@@ -46,6 +48,7 @@ public class StreetController {
         return ResponseEntity.ok(dto);
     }
 
+    @Operation(summary = "Tüm cadde/sokak bilgilerini getirir.")
     @GetMapping
     public ResponseEntity<PageDto<StreetDto>> findAll(
             @RequestParam(required = false) Long districtId,
@@ -61,6 +64,7 @@ public class StreetController {
         return ResponseEntity.ok(mapper.map(streetService.findAll(pageable)));
     }
 
+    @Operation(summary = "Yeni bir cadde/sokak bilgisi eklemek için kullanılır.")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<StreetResponse> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
@@ -71,6 +75,7 @@ public class StreetController {
         return ResponseEntity.status(HttpStatus.CREATED).body(StreetResponse.builder().id(street.getId()).build());
     }
 
+    @Operation(summary = "İd bazlı cadde/sokak bilgisi güncellemek için kullanılır.")
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> replace(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
@@ -82,6 +87,7 @@ public class StreetController {
         return ResponseEntity.ok().body("Street updated.");
     }
 
+    @Operation(summary = "İd bazlı cadde/sokak bilgisi silmek için kullanılır.")
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity delete(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,

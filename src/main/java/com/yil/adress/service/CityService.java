@@ -64,6 +64,7 @@ public class CityService {
         cityRepository.deleteById(id);
     }
 
+
     public City findById(long id) throws CityNotFoundException {
         return cityRepository.findById(id).orElseThrow(CityNotFoundException::new);
     }
