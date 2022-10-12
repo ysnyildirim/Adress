@@ -18,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,15 +52,10 @@ public class CityController {
     @Operation(summary = "Tüm şehirlere ait bilgileri getirir.")
     @GetMapping
     public ResponseEntity<PageDto<CityDto>> findAll(@RequestParam(required = false) Long countryId,
-                                                    @RequestParam(required = false, defaultValue = ApiConstant.PAGE) int page,
-                                                    @RequestParam(required = false, defaultValue = ApiConstant.PAGE_SIZE) int size,
-                                                    @RequestParam(required = false) String[] sort) {
-        if (page < 0)
-            page = 0;
-        if (size <= 0 || size > 1000)
-            size = 1000;
-        List<Sort.Order> orders = new SortOrderConverter(new String[]{"name"}).convert(sort);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
+                                                    @PageableDefault(page = 0, size = 20)
+                                                    @SortDefault.SortDefaults({
+                                                            @SortDefault(sort = "id", direction = Sort.Direction.ASC)
+                                                    })    Pageable pageable) {
         return ResponseEntity.ok(mapper.map(cityService.findAll(pageable)));
     }
 
