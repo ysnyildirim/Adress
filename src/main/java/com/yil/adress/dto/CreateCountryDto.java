@@ -20,8 +20,7 @@ public class CreateCountryDto {
     @NotBlank
     @Length(min = 1, max = 3)
     private String code;
-    @NotBlank
-    @Length(min = 1, max = 3)
+    @Length(max = 3)
     private String phoneCode;
     @NotNull
     private Boolean enabled;

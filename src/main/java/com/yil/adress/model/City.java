@@ -26,8 +26,6 @@ public class City implements IEntity {
     private String code;
     @Column(name = "COUNTRY_ID", nullable = false)
     private Long countryId;
-    @Column(name = "PHONE_CODE", length = 3)
-    private String phoneCode;
     @Type(type = "org.hibernate.type.NumericBooleanType")
     @ColumnDefault(value = "0")
     @Column(name = "ENABLED", nullable = false)

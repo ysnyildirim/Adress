@@ -18,5 +18,4 @@ public class CityDto implements Serializable {
     private String name;
     private String code;
     private Long countryId;
-    private String phoneCode;
 }

@@ -24,7 +24,7 @@ public class Country implements IEntity {
     private String name;
     @Column(name = "CODE", nullable = false, length = 3)
     private String code;
-    @Column(name = "PHONE_CODE", nullable = false, length = 3)
+    @Column(name = "PHONE_CODE", length = 3)
     private String phoneCode;
     @Type(type = "org.hibernate.type.NumericBooleanType")
     @ColumnDefault(value = "0")

@@ -1,62 +1,45 @@
 package com.yil.adress.controller;
 
-import com.yil.adress.base.Mapper;
 import com.yil.adress.base.ApiConstant;
+import com.yil.adress.base.Mapper;
 import com.yil.adress.base.PageDto;
-import com.yil.adress.base.SortOrderConverter;
 import com.yil.adress.dto.CityDto;
 import com.yil.adress.dto.CityResponse;
-import com.yil.adress.dto.CountryResponse;
 import com.yil.adress.dto.CreateCityDto;
 import com.yil.adress.exception.CountryNotFoundException;
 import com.yil.adress.model.City;
-import com.yil.adress.model.Country;
 import com.yil.adress.service.CityService;
-import com.yil.adress.service.CountryService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Operation;
 
 import javax.validation.Valid;
-import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/adr/v1/cities")
 public class CityController {
     private final CityService cityService;
-    private final CountryService countryService;
     private final Mapper<City, CityDto> mapper = new Mapper<>(CityService::toDto);
-
-    @Autowired
-    public CityController(CityService cityService, CountryService countryService) {
-        this.cityService = cityService;
-        this.countryService = countryService;
-    }
 
     @Operation(summary = "Id bazlı şehir bilgilerini getirir.")
     @GetMapping(value = "/{id}")
     public ResponseEntity<CityDto> findById(@PathVariable Long id) {
-        City city = cityService.findById(id);
-        CityDto dto = CityService.toDto(city);
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(mapper.map(cityService.findById(id)));
     }
 
     @Operation(summary = "Tüm şehirlere ait bilgileri getirir.")
     @GetMapping
     public ResponseEntity<PageDto<CityDto>> findAll(@RequestParam(required = false) Long countryId,
-                                                    @PageableDefault(page = 0, size = 20)
-                                                    @SortDefault.SortDefaults({
-                                                            @SortDefault(sort = "id", direction = Sort.Direction.ASC)
-                                                    })    Pageable pageable) {
-        return ResponseEntity.ok(mapper.map(cityService.findAll(pageable)));
+                                                    @PageableDefault Pageable pageable) {
+        if (countryId == null)
+            return ResponseEntity.ok(mapper.map(cityService.findAll(pageable)));
+        else
+            return ResponseEntity.ok(mapper.map(cityService.findAllByCountryId(pageable, countryId)));
     }
 
     @Operation(summary = "Yeni bir şehir bilgisi eklemek için kullanılır.")

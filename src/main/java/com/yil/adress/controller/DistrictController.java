@@ -14,11 +14,13 @@ import com.yil.adress.model.District;
 import com.yil.adress.service.CityService;
 import com.yil.adress.service.DistrictService;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +31,7 @@ import java.util.List;
 /**
  * Created by yasin.yildirim on 3.05.2022.
  */
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/adr/v1/districts")
 public class DistrictController {
@@ -36,34 +39,21 @@ public class DistrictController {
     private final CityService cityService;
     private final Mapper<District, DistrictDto> mapper = new Mapper<>(DistrictService::toDto);
 
-    @Autowired
-    public DistrictController(DistrictService districtService, CityService cityService) {
-        this.districtService = districtService;
-        this.cityService = cityService;
-    }
-
     @Operation(summary = "Id bazlı ilçe/bölge bilgilerini getirir.")
     @GetMapping(value = "/{id}")
     public ResponseEntity<DistrictDto> findById(@PathVariable long id) {
-        District entity = districtService.findById(id);
-        DistrictDto dto = DistrictService.toDto(entity);
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(mapper.map(districtService.findById(id)));
     }
 
     @Operation(summary = "Tüm ilçe/bölge bilgilerini getirir.")
     @GetMapping
     public ResponseEntity<PageDto<DistrictDto>> findAll(
             @RequestParam(required = false) Long cityId,
-            @RequestParam(required = false, defaultValue = ApiConstant.PAGE) int page,
-            @RequestParam(required = false, defaultValue = ApiConstant.PAGE_SIZE) int size,
-            @RequestParam(required = false) String[] sort) {
-        if (page < 0)
-            page = 0;
-        if (size <= 0 || size > 1000)
-            size = 1000;
-        List<Sort.Order> orders = new SortOrderConverter(new String[]{"name"}).convert(sort);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
-        return ResponseEntity.ok(mapper.map(districtService.findAll(pageable)));
+            @PageableDefault Pageable pageable) {
+        if (cityId == null)
+            return ResponseEntity.ok(mapper.map(districtService.findAll(pageable)));
+        else
+            return ResponseEntity.ok(mapper.map(districtService.findAllByCityId(pageable, cityId)));
     }
 
     @Operation(summary = "Yeni bir ilçe/bölge bilgisi eklemek için kullanılır.")

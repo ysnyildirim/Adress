@@ -1,63 +1,44 @@
 package com.yil.adress.controller;
 
-import com.yil.adress.base.Mapper;
 import com.yil.adress.base.ApiConstant;
+import com.yil.adress.base.Mapper;
 import com.yil.adress.base.PageDto;
-import com.yil.adress.base.SortOrderConverter;
 import com.yil.adress.dto.CountryDto;
 import com.yil.adress.dto.CountryResponse;
 import com.yil.adress.dto.CreateCountryDto;
 import com.yil.adress.exception.CountryNotFoundException;
 import com.yil.adress.model.Country;
 import com.yil.adress.service.CountryService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Operation;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * Created by yasin.yildirim on 3.05.2022.
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/adr/v1/countries")
 public class CountryController {
     private final CountryService countryService;
     private final Mapper<Country, CountryDto> mapper = new Mapper<>(CountryService::toDto);
 
-    @Autowired
-    public CountryController(CountryService countryService) {
-        this.countryService = countryService;
-    }
-
     @Operation(summary = "Id bazlı ülke bilgilerini getirir.")
     @GetMapping(value = "/{id}")
     public ResponseEntity<CountryDto> findById(@NotNull @PathVariable Long id) throws CountryNotFoundException {
-        Country entity = countryService.findById(id);
-        CountryDto dto = CountryService.toDto(entity);
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(mapper.map(countryService.findById(id)));
     }
 
     @Operation(summary = "Tüm ülkelere ait bilgileri getirir.")
     @GetMapping
-    public ResponseEntity<PageDto<CountryDto>> findAll(
-            @RequestParam(required = false, defaultValue = ApiConstant.PAGE) int page,
-            @RequestParam(required = false, defaultValue = ApiConstant.PAGE_SIZE) int size,
-            @RequestParam(required = false) String[] sort) {
-        if (page < 0)
-            page = 0;
-        if (size <= 0 || size > 1000)
-            size = 1000;
-        List<Sort.Order> orders = new SortOrderConverter(new String[]{"name", "code"}).convert(sort);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
+    public ResponseEntity<PageDto<CountryDto>> findAll(@PageableDefault Pageable pageable) {
         return ResponseEntity.ok(mapper.map(countryService.findAll(pageable)));
     }
 
@@ -66,7 +47,6 @@ public class CountryController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CountryResponse> create(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
                                                   @RequestBody @Valid CreateCountryDto dto) {
-
         Country country = countryService.save(dto, authenticatedUserId);
         return ResponseEntity.status(HttpStatus.CREATED).body(CountryResponse.builder().id(country.getId()).build());
     }
@@ -89,4 +69,5 @@ public class CountryController {
         countryService.deleteById(id);
         return ResponseEntity.ok("Country deleted.");
     }
+
 }

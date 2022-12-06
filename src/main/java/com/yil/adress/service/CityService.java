@@ -31,7 +31,6 @@ public class CityService {
         dto.setId(city.getId());
         dto.setName(city.getName());
         dto.setCode(city.getCode());
-        dto.setPhoneCode(city.getPhoneCode());
         dto.setCountryId(city.getCountryId());
         return dto;
     }
@@ -41,7 +40,6 @@ public class CityService {
         city.setName(dto.getName());
         city.setCode(dto.getCode());
         city.setCountryId(dto.getCountryId());
-        city.setPhoneCode(dto.getPhoneCode());
         city.setEnabled(dto.getEnabled());
         city.setCreatedUserId(userId);
         city.setCreatedDate(new Date());
