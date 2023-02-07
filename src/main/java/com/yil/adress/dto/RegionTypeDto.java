@@ -1,6 +1,9 @@
+/*
+ * Copyright (c) 2023. Tüm hakları Yasin Yıldırım'a aittir.
+ */
+
 package com.yil.adress.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,10 +15,9 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class CityDto implements Serializable {
-    private Long id;
+public class RegionTypeDto implements Serializable {
+    private Integer id;
+    private Long parentId;
     private String name;
-    private String code;
-    private Long countryId;
+    private Boolean enabled;
 }

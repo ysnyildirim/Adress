@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import javax.persistence.EntityNotFoundException;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-@ApiException(code = ErrorCode.DistrictNotFound)
-public class DistrictNotFoundException extends EntityNotFoundException {
+@ApiException(code = ErrorCode.RegionNotFound)
+public class RegionNotFoundException extends EntityNotFoundException {
 }

@@ -13,8 +13,11 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class InteriorDoorDto implements Serializable {
+public class RegionDto implements Serializable {
     private Long id;
     private String name;
-    private Long exteriorDoorId;
+    private Long parentId;
+    private Integer regionTypeId;
+    private String code;
+    private Boolean enabled;
 }

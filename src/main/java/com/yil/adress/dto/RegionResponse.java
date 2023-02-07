@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExteriorDoorResponse {
+public class RegionResponse {
     private Long id;
 }

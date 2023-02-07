@@ -11,19 +11,23 @@ import java.util.Date;
 @Entity
 @Data
 @Table(schema = "ADR",
-        name = "INTERIOR_DOOR")
-public class InteriorDoor implements IEntity {
+        name = "REGION")
+public class Region implements IEntity {
     @Id
-    @SequenceGenerator(name = "INTERIOR_DOOR_SEQUENCE_GENERATOR",
-            sequenceName = "SEQ_INTERIOR_DOOR_ID",
+    @SequenceGenerator(name = "REGION_SEQUENCE_GENERATOR",
+            sequenceName = "SEQ_REGION_ID",
             schema = "ADR")
-    @GeneratedValue(generator = "INTERIOR_DOOR_SEQUENCE_GENERATOR")
+    @GeneratedValue(generator = "REGION_SEQUENCE_GENERATOR")
     @Column(name = "ID", nullable = false, unique = true)
     private Long id;
+    @Column(name = "PARENT_ID")
+    private Long parentId;
+    @Column(name = "REGION_TYPE_ID", nullable = false)
+    private Integer regionTypeId;
     @Column(name = "NAME", nullable = false, length = 100)
     private String name;
-    @Column(name = "EXTERIOR_DOOR_ID", nullable = false)
-    private Long exteriorDoorId;
+    @Column(name = "CODE", nullable = false, length = 3)
+    private String code;
     @Type(type = "org.hibernate.type.NumericBooleanType")
     @ColumnDefault(value = "0")
     @Column(name = "ENABLED", nullable = false)

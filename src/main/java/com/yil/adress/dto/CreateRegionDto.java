@@ -8,20 +8,24 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateCountryDto {
+public class CreateRegionDto {
     @NotBlank
     @Length(min = 1, max = 100)
     private String name;
     @NotBlank
-    @Length(min = 1, max = 3)
+    @Length(min = 1, max = 100)
     private String code;
-    @Length(max = 3)
-    private String phoneCode;
+    @NotNull
+    private Long parentId;
+    @Positive
+    @NotNull
+    private Integer regionTypeId;
     @NotNull
     private Boolean enabled;
 }

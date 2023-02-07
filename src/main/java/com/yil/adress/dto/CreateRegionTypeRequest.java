@@ -13,12 +13,11 @@ import javax.validation.constraints.NotNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateInteriorDoorDto {
+public class CreateRegionTypeRequest {
     @NotBlank
     @Length(min = 1, max = 100)
     private String name;
-    @NotNull
-    private Long exteriorDoorId;
+    private Long parentId;
     @NotNull
     private Boolean enabled;
 }

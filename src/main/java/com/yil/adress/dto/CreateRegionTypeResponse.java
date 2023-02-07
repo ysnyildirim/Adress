@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Tüm hakları Yasin Yıldırım'a aittir.
+ */
+
 package com.yil.adress.dto;
 
 import lombok.AllArgsConstructor;
@@ -6,10 +10,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-
-public class CityResponse {
-    private Long id;
+@Builder
+public class CreateRegionTypeResponse {
+    private Integer id;
 }
