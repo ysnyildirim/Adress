@@ -59,7 +59,7 @@ public class RegionController {
                                                   @PathVariable Long id,
                                                   @Valid @RequestBody CreateRegionDto request) {
         RegionDto regionDto = regionService.replace(id, request, authenticatedUserId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(RegionResponse.builder().id(regionDto.getId()).build());
+        return ResponseEntity.status(HttpStatus.OK).body(RegionResponse.builder().id(regionDto.getId()).build());
     }
 
 }
