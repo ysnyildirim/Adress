@@ -11,6 +11,7 @@ import com.yil.adress.repository.RegionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -41,6 +42,7 @@ public class RegionService {
         return dto;
     }
 
+    @Transactional(rollbackFor = Throwable.class)
     public RegionDto save(CreateRegionDto dto, long userId) throws RegionNotFoundException, RegionTypeNotFoundException {
         if (!regionTypeService.existsById(dto.getRegionTypeId()))
             throw new RegionTypeNotFoundException();
@@ -55,6 +57,7 @@ public class RegionService {
         return mapper.map(regionRepository.save(region));
     }
 
+    @Transactional(rollbackFor = Throwable.class)
     public RegionDto replace(long id, CreateRegionDto dto, long userId) throws RegionNotFoundException, RegionTypeNotFoundException {
         if (!regionTypeService.existsById(dto.getRegionTypeId()))
             throw new RegionTypeNotFoundException();
@@ -69,23 +72,29 @@ public class RegionService {
         return mapper.map(regionRepository.save(region));
     }
 
+    @Transactional(readOnly = true)
     public RegionDto findById(long id) throws RegionNotFoundException {
         return mapper.map(regionRepository.findById(id).orElseThrow(RegionNotFoundException::new));
     }
 
+    @Transactional(rollbackFor = Throwable.class)
     public void deleteById(long id) {
         regionRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     public PageDto<RegionDto> findAllByRegionId(Pageable pageable, long parentRegionId) {
         return mapper.map(regionRepository.findAllByParentId(pageable, parentRegionId));
     }
 
+    @Transactional(readOnly = true)
     public PageDto<RegionDto> findAll(Pageable pageable) {
         return mapper.map(regionRepository.findAll(pageable));
     }
 
+    @Transactional(readOnly = true)
     public boolean existsById(long id) {
         return regionRepository.existsById(id);
     }
+
 }

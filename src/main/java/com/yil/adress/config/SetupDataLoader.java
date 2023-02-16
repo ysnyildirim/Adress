@@ -2,6 +2,8 @@ package com.yil.adress.config;
 
 import com.yil.adress.dto.CreateRegionDto;
 import com.yil.adress.dto.CreateRegionTypeRequest;
+import com.yil.adress.model.Region;
+import com.yil.adress.repository.RegionRepository;
 import com.yil.adress.service.RegionService;
 import com.yil.adress.service.RegionTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +21,16 @@ public class SetupDataLoader implements ApplicationListener<ContextStartedEvent>
     @Autowired
     private RegionTypeService regionTypeService;
 
+
+    @Autowired
+    private RegionRepository regionRepository;
+
     @Override
     public void onApplicationEvent(ContextStartedEvent event) {
         System.out.println("Start Up Events");
         System.out.println(new Date(event.getTimestamp()));
         System.out.println("----------------------");
+
 
 
 //        defaultRegionTypes();

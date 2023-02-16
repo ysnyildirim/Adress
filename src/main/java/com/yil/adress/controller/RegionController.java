@@ -7,9 +7,11 @@ import com.yil.adress.dto.CreateRegionDto;
 import com.yil.adress.dto.RegionDto;
 import com.yil.adress.dto.RegionResponse;
 import com.yil.adress.model.Region;
+import com.yil.adress.repository.RegionRepository;
 import com.yil.adress.service.RegionService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -23,7 +25,6 @@ import javax.validation.Valid;
 @RequestMapping("/api/adr/v1/region")
 public class RegionController {
     private final RegionService regionService;
-    private final Mapper<Region, RegionDto> mapper = new Mapper<>(RegionService::toDto);
 
     @Operation(summary = "Id bazlı bölge bilgilerini getirir.")
     @GetMapping(value = "/{id}")
@@ -61,13 +62,4 @@ public class RegionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(RegionResponse.builder().id(regionDto.getId()).build());
     }
 
-    @Operation(summary = "İd bazlı bölge bilgisi silmek için kullanılır.")
-    @DeleteMapping(value = "/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> delete(@RequestHeader(value = ApiConstant.AUTHENTICATED_USER_ID) Long authenticatedUserId,
-                                         @PathVariable Long id) {
-        regionService.deleteById(id);
-        return ResponseEntity.ok("City deleted.");
-
-    }
 }
